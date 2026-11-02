@@ -28,11 +28,12 @@ const app = document.getElementById("app");
 async function init() {
   app.innerHTML = `<div class="loading">게임 목록을 불러오는 중…</div>`;
   try {
-    const res = await fetch("./data/games.json");
+    const gamesUrl = `${import.meta.env.BASE_URL}data/games.json`;
+    const res = await fetch(gamesUrl);
     if (!res.ok) throw new Error("games.json load failed");
     state.games = await res.json();
   } catch (err) {
-    app.innerHTML = `<div class="empty-state"><p>게임 데이터를 불러오지 못했습니다.<br>data/games.json 경로를 확인해 주세요.</p></div>`;
+    app.innerHTML = `<div class="empty-state"><p>게임 데이터를 불러오지 못했습니다.<br>public/data/games.json 경로를 확인해 주세요.</p></div>`;
     console.error(err);
     return;
   }

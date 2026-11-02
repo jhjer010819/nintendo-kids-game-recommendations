@@ -2,6 +2,24 @@
 
 학부모가 아이 성향을 입력하면 닌텐도 스위치 타이틀을 추천하는 **정적** 웹사이트입니다.
 
+## 온라인 (자동 배포)
+
+푸시만 하면 GitHub Actions가 Vite로 빌드해 GitHub Pages에 올립니다.
+
+- **Live:** <https://jhjer010819.github.io/nintendo-kids-game-recommendations/>
+- **Repo:** <https://github.com/jhjer010819/nintendo-kids-game-recommendations>
+
+`main`에 푸시 → Actions → Deploy GitHub Pages → 약 1–2분 후 반영.
+
+### 최초 1회 (Pages 소스)
+
+GitHub 웹에서 아직 Pages가 안 켜져 있으면:
+
+1. Repo → **Settings** → **Pages**
+2. **Build and deployment** → **Source** = **GitHub Actions**
+
+(권한 있으면 Actions 워크플로가 첫 배포를 끝낸 뒤 URL이 활성화됩니다.)
+
 ## 로컬에서 미리보기
 
 ```bash
@@ -13,32 +31,35 @@ npm run dev -- --host 127.0.0.1 --port 5173
 
 브라우저에서 <http://127.0.0.1:5173> 접속.
 
-> 모듈(`import`)과 `fetch('./data/games.json')`을 쓰므로 **파일 직접 열기(file://)는 안 됩니다.**
+> 모듈(`import`)과 `fetch(.../data/games.json)`을 쓰므로 **파일 직접 열기(file://)는 안 됩니다.**
 
-빌드:
+빌드(로컬에서 Pages와 같은 `base` 경로로 확인):
 
 ```bash
 npm run build
 npm run preview -- --host 127.0.0.1 --port 5173
 ```
 
+미리보기는 <http://127.0.0.1:5173/nintendo-kids-game-recommendations/> 입니다.
+
 ## 파일 구성
 
 ```
 .
-  index.html          # 엔트리
-  css/styles.css      # Nintendo 레드/옐로/블루 테마
-  js/app.js           # 랜딩 → 4스텝 위저드 → 결과 UI
-  js/matching.js      # 점수·필터 알고리즘
-  data/games.json     # 편집 가능한 게임 카탈로그
-  package.json        # Vite 개발 서버
-  vite.config.js
+  index.html                 # 엔트리
+  css/styles.css             # Nintendo 레드/옐로/블루 테마
+  js/app.js                  # 랜딩 → 4스텝 위저드 → 결과 UI
+  js/matching.js             # 점수·필터 알고리즘
+  public/data/games.json     # 편집 가능한 게임 카탈로그 (Vite가 dist로 복사)
+  package.json               # Vite 개발 서버
+  vite.config.js             # build 시 base = /nintendo-kids-game-recommendations/
+  .github/workflows/deploy-pages.yml
   README.md
 ```
 
 ## games.json에 타이틀 추가하기
 
-`data/games.json`은 배열입니다. 객체를 하나 더 넣으면 됩니다.
+`public/data/games.json`은 배열입니다. 객체를 하나 더 넣으면 됩니다. `main`에 푸시하면 Pages가 자동 갱신됩니다.
 
 | 필드 | 설명 |
 |------|------|
