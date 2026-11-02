@@ -87,14 +87,20 @@ function renderStep(step) {
     3: step3Html(),
     4: step4Html(),
   };
+  const headers = {
+    1: "아이 기본 정보 & 발달 단계",
+    2: "안심·플레이 조건",
+    3: "기기 & 화면",
+    4: "취향 고르기",
+  };
   const titles = {
-    1: "아이 기본 정보",
+    1: "👶 아이의 연령과 조작 숙련도는 어떤가요?",
     2: "안심·플레이 조건",
     3: "기기 & 화면",
     4: "취향 고르기",
   };
   const descs = {
-    1: "나이·읽기·조작·좌절감을 알려 주세요.",
+    1: "아이의 눈높이에 꼭 맞는 게임을 찾기 위한 기본 질문입니다.",
     2: "폭력·저장·함께 하기 방식을 고릅니다.",
     3: "가지고 있는 기기와 플레이 환경을 선택하세요.",
     4: "좋아하는 캐릭터와 플레이 스타일을 골라 주세요.",
@@ -103,15 +109,16 @@ function renderStep(step) {
   return `
     <div class="wizard-shell">
       <div class="progress-wrap">
-        <div class="progress-meta">
-          <span>Step <strong>${step}</strong> / ${STEPS}</span>
-          <span>${progressPct(step)}%</span>
+        <div class="step-header-row">
+          <span class="step-pill">STEP ${step} OF ${STEPS}</span>
+          <span class="step-header-title">${headers[step]}</span>
+          <span class="step-header-pct">${progressPct(step)}%</span>
         </div>
         <div class="progress-track" role="progressbar" aria-valuenow="${progressPct(step)}" aria-valuemin="0" aria-valuemax="100">
           <div class="progress-fill" style="width:${progressPct(step)}%"></div>
         </div>
       </div>
-      <section class="step-panel">
+      <section class="step-panel step-${step}">
         <h2 class="step-title">${titles[step]}</h2>
         <p class="step-desc">${descs[step]}</p>
         ${bodies[step]}
@@ -142,34 +149,34 @@ function step1Html() {
     <div class="field">
       <span class="field-label"><i class="fa-solid fa-cake-candles"></i>나이 (만)</span>
       <div class="option-grid cols-4">
-        ${optBtn("age", "3-4", "만 3–4세", "유아", "🐣", a.age === "3-4")}
-        ${optBtn("age", "5-7", "만 5–7세", "초등 저학년", "🧒", a.age === "5-7")}
-        ${optBtn("age", "8-10", "만 8–10세", "초등 중학년", "🎒", a.age === "8-10")}
-        ${optBtn("age", "11+", "만 11세+", "고학년 이상", "🧑", a.age === "11+")}
+        ${optBtn("age", "3-4", "만 3~4세", "유아", "🐣", a.age === "3-4")}
+        ${optBtn("age", "5-7", "만 5~7세", "미취학", "🧒", a.age === "5-7")}
+        ${optBtn("age", "8-10", "만 8~10세", "초등 저학년", "🎒", a.age === "8-10")}
+        ${optBtn("age", "11+", "만 11세 이상", "초등고학년", "🧑", a.age === "11+")}
       </div>
     </div>
     <div class="field">
       <span class="field-label"><i class="fa-solid fa-book-open"></i>읽기 수준</span>
       <div class="option-grid cols-3">
-        ${optBtn("reading", "none", "글자 모름", "읽기 거의 없음", "🙈", a.reading === "none")}
-        ${optBtn("reading", "basic", "기초", "짧은 글 가능", "📖", a.reading === "basic")}
-        ${optBtn("reading", "fluent", "유창", "메뉴·대사 OK", "📚", a.reading === "fluent")}
+        ${optBtn("reading", "none", "글자모름", "음성과 그림 위주 플레이 필요", "🙈", a.reading === "none")}
+        ${optBtn("reading", "basic", "기초", "쉬운 단어 읽기 가능", "📖", a.reading === "basic")}
+        ${optBtn("reading", "fluent", "유창", "스토리형 대사 이해 가능", "📚", a.reading === "fluent")}
       </div>
     </div>
     <div class="field">
-      <span class="field-label"><i class="fa-solid fa-gamepad"></i>조작 숙련도</span>
+      <span class="field-label"><i class="fa-solid fa-gamepad"></i>컨트롤러 조작 능력</span>
       <div class="option-grid cols-3">
-        ${optBtn("control", "beginner", "서투름", "버튼이 낯설어요", "🤚", a.control === "beginner")}
-        ${optBtn("control", "average", "보통", "기본 조작 OK", "👍", a.control === "average")}
-        ${optBtn("control", "skilled", "능숙", "액션도 자신", "🕹️", a.control === "skilled")}
+        ${optBtn("control", "beginner", "서투름", "버튼 1~2개 누르기, 모션 조작위주", "🤚", a.control === "beginner")}
+        ${optBtn("control", "average", "보통", "기본 이동 및 자이로, 버튼 조작 가능", "👍", a.control === "average")}
+        ${optBtn("control", "skilled", "능숙", "3D 자유 시점 및 복잡한 커맨드 조작 가능", "🕹️", a.control === "skilled")}
       </div>
     </div>
     <div class="field">
-      <span class="field-label"><i class="fa-solid fa-face-dizzy"></i>실패했을 때</span>
+      <span class="field-label"><i class="fa-solid fa-face-dizzy"></i>게임 실패 시 좌절 저항력</span>
       <div class="option-grid cols-3">
-        ${optBtn("frustration", "easy_quit", "쉽게 포기", "금방 속상해해요", "💧", a.frustration === "easy_quit")}
-        ${optBtn("frustration", "normal", "보통", "조금 참아요", "🙂", a.frustration === "normal")}
-        ${optBtn("frustration", "persistent", "끈기 있음", "다시 도전!", "💪", a.frustration === "persistent")}
+        ${optBtn("frustration", "easy_quit", "쉽게포기", "자주 죽거나 실패하면 떼를 쓰거나 포기함", "💧", a.frustration === "easy_quit")}
+        ${optBtn("frustration", "normal", "보통", "쉬운 보상이 있으면 재도전함", "🙂", a.frustration === "normal")}
+        ${optBtn("frustration", "persistent", "끈기있음", "어려운 과제도 성취감을 느끼며 반복 도전", "💪", a.frustration === "persistent")}
       </div>
     </div>
   `;

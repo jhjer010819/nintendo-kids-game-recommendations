@@ -187,6 +187,42 @@ body::before {
   color: var(--n-red);
 }
 
+.step-header-row {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  margin-bottom: 0.55rem;
+  flex-wrap: wrap;
+}
+
+.step-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.28rem 0.7rem;
+  border-radius: 999px;
+  background: #ffe5e8;
+  color: var(--n-red);
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  line-height: 1.2;
+}
+
+.step-header-title {
+  flex: 1;
+  min-width: 0;
+  font-size: 0.98rem;
+  font-weight: 800;
+  color: var(--ink);
+  letter-spacing: -0.02em;
+}
+
+.step-header-pct {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--muted);
+}
+
 .progress-track {
   height: 10px;
   border-radius: 999px;
@@ -242,6 +278,19 @@ body::before {
 .field-label i {
   color: var(--n-blue);
   margin-right: 0.35rem;
+}
+
+/* Step 1: lighter type from 나이(만) fields downward */
+.step-1 .field-label {
+  font-weight: 600;
+}
+
+.step-1 .opt .opt-text {
+  font-weight: 600;
+}
+
+.step-1 .opt .opt-hint {
+  font-weight: 400;
 }
 
 .option-grid {
@@ -305,6 +354,7 @@ body::before {
   font-size: 0.72rem;
   font-weight: 500;
   color: var(--muted);
+  line-height: 1.35;
 }
 
 .nav-row {
