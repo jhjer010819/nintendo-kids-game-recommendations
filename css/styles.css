@@ -285,8 +285,8 @@ body::before {
   display: block;
   margin-bottom: 0.55rem;
   font-size: 0.95rem;
-  font-weight: 600;
-  color: #1f2937;
+  font-weight: 700;
+  color: #111827;
 }
 
 .field-label i {
@@ -297,7 +297,7 @@ body::before {
 .option-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 0.55rem;
+  gap: 0.65rem;
 }
 
 .option-grid.cols-1 {
@@ -314,47 +314,93 @@ body::before {
 }
 
 .opt {
+  --opt-border: #e5e7eb;
+  --opt-selected: #00bbd4;
   position: relative;
   display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 0.15rem;
+  gap: 0.35rem;
   padding: 0.85rem 0.9rem;
-  border-radius: 1rem;
-  border: 2px solid #eee0e2;
-  background: #fffafb;
+  border-radius: 0.9rem;
+  border: 1.5px solid var(--opt-border);
+  background: #ffffff;
   cursor: pointer;
-  text-align: left;
   font-family: inherit;
-  transition: border-color 0.15s, background 0.15s, transform 0.12s;
+  color: inherit;
+  transition: border-color 0.15s, border-width 0.15s, box-shadow 0.15s, transform 0.12s;
 }
 
 .opt:hover {
-  border-color: #ffb3ba;
+  border-color: #b5e8f0;
   transform: translateY(-1px);
 }
 
 .opt.selected {
-  border-color: var(--n-red);
-  background: var(--soft);
-  box-shadow: 0 0 0 1px var(--n-red);
+  border-color: var(--opt-selected);
+  border-width: 2.5px;
+  background: #ffffff;
+  box-shadow: 0 0 0 1px rgba(0, 187, 212, 0.12);
 }
 
-.opt .opt-emoji {
-  font-size: 1.25rem;
+/* Compact vertical cards (age-style): emoji above, centered */
+.opt.opt-v {
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  min-height: 6.4rem;
+  padding: 0.9rem 0.55rem;
+}
+
+.opt.opt-v .opt-emoji {
+  font-size: 1.55rem;
   line-height: 1;
+  margin-bottom: 0.2rem;
+}
+
+.opt.opt-v .opt-body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.15rem;
+}
+
+/* Wider horizontal cards: emoji left, text stacked right */
+.opt.opt-h {
+  flex-direction: row;
+  align-items: center;
+  text-align: left;
+  gap: 0.7rem;
+  min-height: 4.4rem;
+  padding: 0.85rem 0.95rem;
+}
+
+.opt.opt-h .opt-emoji {
+  flex-shrink: 0;
+  font-size: 1.45rem;
+  line-height: 1;
+  width: 1.6rem;
+  text-align: center;
+}
+
+.opt.opt-h .opt-body {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.18rem;
+  min-width: 0;
 }
 
 .opt .opt-text,
 .opt .option-title {
   font-size: 0.95rem;
-  font-weight: 600;
-  color: #1f2937;
+  font-weight: 700;
+  color: #111827;
+  line-height: 1.25;
 }
 
 .opt .opt-hint,
 .opt .option-desc {
-  font-size: 0.85rem;
+  font-size: 0.8rem;
   font-weight: 400;
   color: #6b7280;
   line-height: 1.35;

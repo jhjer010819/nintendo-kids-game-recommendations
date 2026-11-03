@@ -214,12 +214,17 @@ function renderStep(step) {
   `;
 }
 
-function optBtn(group, value, label, hint, emoji, selected) {
+function optBtn(group, value, label, hint, emoji, selected, layout = "horizontal") {
+  const layoutClass = layout === "vertical" ? "opt-v" : "opt-h";
+  const emojiHtml = emoji ? `<span class="opt-emoji" aria-hidden="true">${emoji}</span>` : "";
+  const textHtml = `
+      <span class="opt-body">
+        <span class="opt-text option-title">${label}</span>
+        ${hint ? `<span class="opt-hint option-desc">${hint}</span>` : ""}
+      </span>`;
   return `
-    <button type="button" class="opt ${selected ? "selected" : ""}" data-group="${group}" data-value="${value}" aria-pressed="${selected}">
-      ${emoji ? `<span class="opt-emoji">${emoji}</span>` : ""}
-      <span class="opt-text option-title">${label}</span>
-      ${hint ? `<span class="opt-hint option-desc">${hint}</span>` : ""}
+    <button type="button" class="opt ${layoutClass} ${selected ? "selected" : ""}" data-group="${group}" data-value="${value}" aria-pressed="${selected}">
+      ${emojiHtml}${textHtml}
     </button>
   `;
 }
@@ -230,34 +235,34 @@ function step1Html() {
     <div class="field">
       <span class="field-label section-title"><i class="fa-solid fa-cake-candles"></i>나이 (만)</span>
       <div class="option-grid cols-4">
-        ${optBtn("age", "3-4", "만 3~4세", "유아", "🐣", a.age === "3-4")}
-        ${optBtn("age", "5-7", "만 5~7세", "미취학", "🧒", a.age === "5-7")}
-        ${optBtn("age", "8-10", "만 8~10세", "초등 저학년", "🎒", a.age === "8-10")}
-        ${optBtn("age", "11+", "만 11세 이상", "초등고학년", "🧑", a.age === "11+")}
+        ${optBtn("age", "3-4", "만 3~4세", "유아", "🐣", a.age === "3-4", "vertical")}
+        ${optBtn("age", "5-7", "만 5~7세", "미취학", "🧒", a.age === "5-7", "vertical")}
+        ${optBtn("age", "8-10", "만 8~10세", "초등 저학년", "🎒", a.age === "8-10", "vertical")}
+        ${optBtn("age", "11+", "만 11세 이상", "초등고학년", "🧑", a.age === "11+", "vertical")}
       </div>
     </div>
     <div class="field">
       <span class="field-label section-title"><i class="fa-solid fa-book-open"></i>읽기 수준</span>
       <div class="option-grid cols-3">
-        ${optBtn("reading", "none", "글자모름", "음성과 그림 위주 플레이 필요", "🙈", a.reading === "none")}
-        ${optBtn("reading", "basic", "기초", "쉬운 단어 읽기 가능", "📖", a.reading === "basic")}
-        ${optBtn("reading", "fluent", "유창", "스토리형 대사 이해 가능", "📚", a.reading === "fluent")}
+        ${optBtn("reading", "none", "글자모름", "음성과 그림 위주 플레이 필요", "🙈", a.reading === "none", "horizontal")}
+        ${optBtn("reading", "basic", "기초", "쉬운 단어 읽기 가능", "📖", a.reading === "basic", "horizontal")}
+        ${optBtn("reading", "fluent", "유창", "스토리형 대사 이해 가능", "📚", a.reading === "fluent", "horizontal")}
       </div>
     </div>
     <div class="field">
       <span class="field-label section-title"><i class="fa-solid fa-gamepad"></i>컨트롤러 조작 능력</span>
       <div class="option-grid cols-3">
-        ${optBtn("control", "beginner", "서투름", "버튼 1~2개 누르기, 모션 조작위주", "🤚", a.control === "beginner")}
-        ${optBtn("control", "average", "보통", "기본 이동 및 자이로, 버튼 조작 가능", "👍", a.control === "average")}
-        ${optBtn("control", "skilled", "능숙", "3D 자유 시점 및 복잡한 커맨드 조작 가능", "🕹️", a.control === "skilled")}
+        ${optBtn("control", "beginner", "서투름", "버튼 1~2개 누르기, 모션 조작위주", "🤚", a.control === "beginner", "horizontal")}
+        ${optBtn("control", "average", "보통", "기본 이동 및 자이로, 버튼 조작 가능", "👍", a.control === "average", "horizontal")}
+        ${optBtn("control", "skilled", "능숙", "3D 자유 시점 및 복잡한 커맨드 조작 가능", "🕹️", a.control === "skilled", "horizontal")}
       </div>
     </div>
     <div class="field">
       <span class="field-label section-title"><i class="fa-solid fa-face-dizzy"></i>게임 실패 시 좌절 저항력</span>
       <div class="option-grid cols-3">
-        ${optBtn("frustration", "easy_quit", "쉽게포기", "자주 죽거나 실패하면 떼를 쓰거나 포기함", "💧", a.frustration === "easy_quit")}
-        ${optBtn("frustration", "normal", "보통", "쉬운 보상이 있으면 재도전함", "🙂", a.frustration === "normal")}
-        ${optBtn("frustration", "persistent", "끈기있음", "어려운 과제도 성취감을 느끼며 반복 도전", "💪", a.frustration === "persistent")}
+        ${optBtn("frustration", "easy_quit", "쉽게포기", "자주 죽거나 실패하면 떼를 쓰거나 포기함", "💧", a.frustration === "easy_quit", "horizontal")}
+        ${optBtn("frustration", "normal", "보통", "쉬운 보상이 있으면 재도전함", "🙂", a.frustration === "normal", "horizontal")}
+        ${optBtn("frustration", "persistent", "끈기있음", "어려운 과제도 성취감을 느끼며 반복 도전", "💪", a.frustration === "persistent", "horizontal")}
       </div>
     </div>
   `;
