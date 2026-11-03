@@ -89,7 +89,7 @@ npm run preview -- --host 127.0.0.1 --port 5173
 | `mom_control.violence_level` | `"strict"` \| `"cartoon"` \| `"action"` |
 | `mom_control.save_style` | `"anytime"` \| `"checkpoint"` |
 | `mom_control.coop_types` | `["solo","helper","party"]` 일부 |
-| `mom_control.*` 표시 문자열 | Mom-Safety Badge에 그대로 노출 |
+| `mom_control.*` 표시 문자열 | 엄마 안심 지수에 그대로 노출 |
 | `summary` / `badge` / `image_emoji` | 카드 요약·뱃지·이모지 |
 
 시드 데이터는 약 12개입니다. 나중에 ~100개로 교체해도 UI는 그대로입니다.

@@ -414,8 +414,8 @@ function syncNextButton() {
 function momBadgeHtml(game, compact = false) {
   const m = game.mom_control || {};
   return `
-    <div class="mom-badge" aria-label="Mom-Safety Badge">
-      <div class="mom-badge-title"><i class="fa-solid fa-shield-heart"></i> Mom-Safety Badge</div>
+    <div class="mom-badge" aria-label="엄마 안심 지수">
+      <div class="mom-badge-title"><i class="fa-solid fa-shield-heart"></i> 엄마 안심 지수</div>
       <div class="mom-chip"><i class="fa-solid fa-book"></i>읽기 ${readingLabel(game.reading_level)}</div>
       <div class="mom-chip"><i class="fa-solid fa-floppy-disk"></i>${m.save_type || "—"}</div>
       <div class="mom-chip"><i class="fa-solid fa-shield"></i>${m.violence || "—"}</div>
