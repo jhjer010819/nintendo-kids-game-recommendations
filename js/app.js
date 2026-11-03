@@ -30,9 +30,10 @@ async function init() {
   app.setAttribute("data-booted", "1");
   app.innerHTML = `<div class="loading">게임 목록을 불러오는 중…</div>`;
   try {
+    // Absolute path for custom domain. Avoid new URL(rel, "/") — invalid base.
     const gamesUrl = new URL(
-      "data/games.json",
-      import.meta.env.BASE_URL || "/",
+      `${import.meta.env.BASE_URL || "/"}data/games.json`,
+      window.location.origin,
     ).href;
     const res = await fetch(gamesUrl);
     if (!res.ok) throw new Error("games.json load failed");
