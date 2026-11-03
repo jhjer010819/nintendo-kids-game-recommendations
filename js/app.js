@@ -71,6 +71,7 @@ function renderLanding() {
     <div class="landing-page">
       <section class="landing-hero" aria-label="시작">
         <div class="brand-mark" aria-hidden="true"><i class="fa-solid fa-gamepad"></i></div>
+        <p class="brand-eyebrow">유아부터 초등까지, 내 아이를 위한</p>
         <h1 class="brand-title">닌텐도 게임 추천</h1>
         <p class="brand-sub">아이 연령과 성향에 딱 맞는 안전한 스위치 게임을 엄마·아빠가 직접 골라보세요.</p>
         <button type="button" class="btn btn-primary" id="btn-start">
