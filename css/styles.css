@@ -195,15 +195,16 @@ body::before {
   flex-wrap: wrap;
 }
 
-.step-pill {
+.step-pill,
+.step-badge {
   display: inline-flex;
   align-items: center;
   padding: 0.28rem 0.7rem;
   border-radius: 999px;
   background: #ffe5e8;
   color: var(--n-red);
-  font-size: 0.72rem;
-  font-weight: 800;
+  font-size: 0.85rem;
+  font-weight: 600;
   letter-spacing: 0.04em;
   line-height: 1.2;
 }
@@ -211,16 +212,16 @@ body::before {
 .step-header-title {
   flex: 1;
   min-width: 0;
-  font-size: 0.98rem;
-  font-weight: 800;
-  color: var(--ink);
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #1f2937;
   letter-spacing: -0.02em;
 }
 
 .step-header-pct {
-  font-size: 0.82rem;
-  font-weight: 700;
-  color: var(--muted);
+  font-size: 0.85rem;
+  font-weight: 400;
+  color: #6b7280;
 }
 
 .progress-track {
@@ -245,18 +246,21 @@ body::before {
   border: 2px solid rgba(230, 0, 18, 0.08);
 }
 
-.step-title {
+.step-title,
+.main-question {
   margin: 0 0 0.35rem;
   font-size: 1.35rem;
-  font-weight: 900;
+  font-weight: 700;
+  color: #111827;
   letter-spacing: -0.02em;
 }
 
-.step-desc {
+.step-desc,
+.subtitle {
   margin: 0 0 1.25rem;
-  font-size: 0.92rem;
-  color: var(--muted);
-  font-weight: 500;
+  font-size: 0.85rem;
+  color: #6b7280;
+  font-weight: 400;
 }
 
 .field {
@@ -267,30 +271,18 @@ body::before {
   margin-bottom: 0.5rem;
 }
 
-.field-label {
+.field-label,
+.section-title {
   display: block;
   margin-bottom: 0.55rem;
-  font-size: 0.92rem;
-  font-weight: 800;
-  color: var(--ink);
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #1f2937;
 }
 
 .field-label i {
   color: var(--n-blue);
   margin-right: 0.35rem;
-}
-
-/* Step 1: lighter type from 나이(만) fields downward */
-.step-1 .field-label {
-  font-weight: 600;
-}
-
-.step-1 .opt .opt-text {
-  font-weight: 600;
-}
-
-.step-1 .opt .opt-hint {
-  font-weight: 400;
 }
 
 .option-grid {
@@ -344,16 +336,18 @@ body::before {
   line-height: 1;
 }
 
-.opt .opt-text {
-  font-size: 0.92rem;
-  font-weight: 800;
-  color: var(--ink);
+.opt .opt-text,
+.opt .option-title {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #1f2937;
 }
 
-.opt .opt-hint {
-  font-size: 0.72rem;
-  font-weight: 500;
-  color: var(--muted);
+.opt .opt-hint,
+.opt .option-desc {
+  font-size: 0.85rem;
+  font-weight: 400;
+  color: #6b7280;
   line-height: 1.35;
 }
 
