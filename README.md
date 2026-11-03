@@ -6,7 +6,8 @@
 
 푸시만 하면 GitHub Actions가 Vite로 빌드해 GitHub Pages에 올립니다.
 
-- **Live:** <https://jhjer010819.github.io/nintendo-kids-game-recommendations/>
+- **Live:** <https://kidgame.mymallow.cloud/>
+- **GitHub Pages (legacy path):** <https://jhjer010819.github.io/nintendo-kids-game-recommendations/> (custom domain preferred; build `base` is `/`)
 - **Repo:** <https://github.com/jhjer010819/nintendo-kids-game-recommendations>
 
 `main`에 푸시 → Actions → Deploy GitHub Pages → 약 1–2분 후 반영.
@@ -40,7 +41,7 @@ npm run build
 npm run preview -- --host 127.0.0.1 --port 5173
 ```
 
-미리보기는 <http://127.0.0.1:5173/nintendo-kids-game-recommendations/> 입니다.
+미리보기는 <http://127.0.0.1:5173/> 입니다.
 
 ## 페이지 구성
 
@@ -49,7 +50,7 @@ npm run preview -- --host 127.0.0.1 --port 5173
 - `/games/<slug>.html` — 부모용 심층 가이드 12편
 - 브랜드: **마이멜로 (MyMallow)** · 문의: MyMallow.Cloud@gmail.com
 
-예: <https://jhjer010819.github.io/nintendo-kids-game-recommendations/games/kirby-discovery.html>
+예: <https://kidgame.mymallow.cloud/games/kirby-discovery.html>
 
 ## 파일 구성
 
@@ -62,7 +63,8 @@ npm run preview -- --host 127.0.0.1 --port 5173
   js/app.js / matching.js / site-paths.js
   public/data/games.json     # 편집 가능한 게임 카탈로그
   scripts/generate-static-pages.mjs
-  vite.config.js             # build 시 base = /nintendo-kids-game-recommendations/
+  vite.config.js             # base = / (custom domain kidgame.mymallow.cloud)
+  public/CNAME               # kidgame.mymallow.cloud
   .github/workflows/deploy-pages.yml
 ```
 

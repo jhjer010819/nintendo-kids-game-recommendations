@@ -4,7 +4,6 @@ import { fileURLToPath } from "node:url";
 import { readdirSync } from "node:fs";
 
 const rootDir = dirname(fileURLToPath(import.meta.url));
-const PAGES_BASE = "/nintendo-kids-game-recommendations/";
 
 function gameHtmlInputs() {
   const dir = resolve(rootDir, "games");
@@ -19,10 +18,9 @@ function gameHtmlInputs() {
   }
 }
 
-export default defineConfig(({ command }) => ({
-  // Project Pages need the repo base in production builds.
-  // Local `npm run dev` stays at http://127.0.0.1:5173/
-  base: command === "build" ? PAGES_BASE : "/",
+export default defineConfig({
+  // Custom domain (kidgame.mymallow.cloud) serves from site root.
+  base: "/",
   server: {
     host: "127.0.0.1",
     port: 5173,
@@ -45,4 +43,4 @@ export default defineConfig(({ command }) => ({
       },
     },
   },
-}));
+});
