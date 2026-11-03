@@ -77,7 +77,7 @@ function renderLanding() {
         <div class="soft-divider" role="presentation">아래 내용은 천천히 읽어 보세요</div>
 
         <div class="quiet-block">
-          <h2>말랑랩 닌텐도 추천 알고리즘 소개</h2>
+          <h2>마이멜로 닌텐도 추천 알고리즘 소개</h2>
           <div class="quiet-accordion">
             <details>
               <summary>4가지 핵심 요인</summary>
@@ -95,7 +95,7 @@ function renderLanding() {
               <div class="acc-body">
                 <table class="criteria-table">
                   <thead>
-                    <tr><th>레벨</th><th>기준 (플레이스홀더)</th></tr>
+                    <tr><th>레벨</th><th>기준</th></tr>
                   </thead>
                   <tbody>
                     <tr><th>LV1</th><td>버튼 1~2개·모션 위주. 시점 조작 거의 없음.</td></tr>
@@ -122,7 +122,7 @@ function renderLanding() {
 
         <div class="quiet-block">
           <h2>인기 닌텐도 게임 부모용 심층 가이드</h2>
-          <p>아래 글은 크롤러·검색용 플레이스홀더 원고입니다. 내용은 나중에 다듬을 수 있습니다.</p>
+          <p>구매 전에 연령·조작·안심 포인트를 짧게 정리한 마이멜로 가이드입니다.</p>
           <ul class="guide-link-list">
             ${guideLinks}
           </ul>
@@ -134,7 +134,7 @@ function renderLanding() {
             <a href="${withBase("contact.html")}">Contact</a>
             <a href="${withBase("privacy.html")}">Privacy Policy</a>
           </nav>
-          <p class="footer-note">말랑랩 · 학부모용 닌텐도 추천 가이드</p>
+          <p class="footer-note">마이멜로 (MyMallow) · 학부모용 닌텐도 추천 가이드</p>
         </footer>
       </section>
     </div>

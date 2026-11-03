@@ -42,19 +42,28 @@ npm run preview -- --host 127.0.0.1 --port 5173
 
 미리보기는 <http://127.0.0.1:5173/nintendo-kids-game-recommendations/> 입니다.
 
+## 페이지 구성
+
+- `/` — Track A 히어로(맞춤 찾기 CTA) + 스크롤 아래 Track B(알고리즘·가이드 링크·푸터)
+- `/about.html` `/contact.html` `/privacy.html` — 소개·문의·개인정보
+- `/games/<slug>.html` — 부모용 심층 가이드 12편
+- 브랜드: **마이멜로 (MyMallow)** · 문의: MyMallow.Cloud@gmail.com
+
+예: <https://jhjer010819.github.io/nintendo-kids-game-recommendations/games/kirby-discovery.html>
+
 ## 파일 구성
 
 ```
 .
-  index.html                 # 엔트리
-  css/styles.css             # Nintendo 레드/옐로/블루 테마
-  js/app.js                  # 랜딩 → 4스텝 위저드 → 결과 UI
-  js/matching.js             # 점수·필터 알고리즘
-  public/data/games.json     # 편집 가능한 게임 카탈로그 (Vite가 dist로 복사)
-  package.json               # Vite 개발 서버
+  index.html                 # SPA 엔트리 (위저드)
+  about.html / contact.html / privacy.html
+  games/*.html               # 심층 가이드 (Vite MPA)
+  css/styles.css / css/seo-pages.css
+  js/app.js / matching.js / site-paths.js
+  public/data/games.json     # 편집 가능한 게임 카탈로그
+  scripts/generate-static-pages.mjs
   vite.config.js             # build 시 base = /nintendo-kids-game-recommendations/
   .github/workflows/deploy-pages.yml
-  README.md
 ```
 
 ## games.json에 타이틀 추가하기
