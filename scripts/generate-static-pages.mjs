@@ -127,6 +127,7 @@ function siteChrome({ title, description, active, body, jsonLd, nest = "" }) {
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>${title} | 우리 아이 닌텐도 Guide</title>
   <meta name="description" content="${description}" />
+  <meta name="google-adsense-account" content="ca-pub-5854572232694460" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet" />
