@@ -233,7 +233,7 @@ function step1Html() {
   const a = state.answers;
   return `
     <div class="field">
-      <span class="field-label section-title"><i class="fa-solid fa-cake-candles"></i>나이 (만)</span>
+      <span class="field-label section-title">1. 나이 (만)</span>
       <div class="option-grid cols-4">
         ${optBtn("age", "3-4", "만 3~4세", "유아", "🐣", a.age === "3-4", "vertical")}
         ${optBtn("age", "5-7", "만 5~7세", "미취학", "🧒", a.age === "5-7", "vertical")}
@@ -242,7 +242,7 @@ function step1Html() {
       </div>
     </div>
     <div class="field">
-      <span class="field-label section-title"><i class="fa-solid fa-book-open"></i>읽기 수준</span>
+      <span class="field-label section-title">2. 읽기 수준</span>
       <div class="option-grid cols-3">
         ${optBtn("reading", "none", "글자모름", "음성과 그림 위주 플레이 필요", "🙈", a.reading === "none", "horizontal")}
         ${optBtn("reading", "basic", "기초", "쉬운 단어 읽기 가능", "📖", a.reading === "basic", "horizontal")}
@@ -250,7 +250,7 @@ function step1Html() {
       </div>
     </div>
     <div class="field">
-      <span class="field-label section-title"><i class="fa-solid fa-gamepad"></i>컨트롤러 조작 능력</span>
+      <span class="field-label section-title">3. 컨트롤러 조작 능력</span>
       <div class="option-grid cols-3">
         ${optBtn("control", "beginner", "서투름", "버튼 1~2개 누르기, 모션 조작위주", "🤚", a.control === "beginner", "horizontal")}
         ${optBtn("control", "average", "보통", "기본 이동 및 자이로, 버튼 조작 가능", "👍", a.control === "average", "horizontal")}
@@ -258,7 +258,7 @@ function step1Html() {
       </div>
     </div>
     <div class="field">
-      <span class="field-label section-title"><i class="fa-solid fa-face-dizzy"></i>게임 실패 시 좌절 저항력</span>
+      <span class="field-label section-title">4. 게임 실패 시 좌절 저항력</span>
       <div class="option-grid cols-3">
         ${optBtn("frustration", "easy_quit", "쉽게포기", "자주 죽거나 실패하면 떼를 쓰거나 포기함", "💧", a.frustration === "easy_quit", "horizontal")}
         ${optBtn("frustration", "normal", "보통", "쉬운 보상이 있으면 재도전함", "🙂", a.frustration === "normal", "horizontal")}
@@ -272,7 +272,7 @@ function step2Html() {
   const a = state.answers;
   return `
     <div class="field">
-      <span class="field-label section-title"><i class="fa-solid fa-shield-heart"></i>폭력·자극 허용</span>
+      <span class="field-label section-title">1. 폭력·자극 허용</span>
       <div class="option-grid cols-3">
         ${optBtn("violence", "strict", "완전 금지", "무해한 것만", "🛡️", a.violence === "strict")}
         ${optBtn("violence", "cartoon", "만화 수준", "귀여운 액션 OK", "✨", a.violence === "cartoon")}
@@ -280,14 +280,14 @@ function step2Html() {
       </div>
     </div>
     <div class="field">
-      <span class="field-label section-title"><i class="fa-solid fa-floppy-disk"></i>저장 방식 선호</span>
+      <span class="field-label section-title">2. 저장 방식 선호</span>
       <div class="option-grid">
         ${optBtn("save_style", "anytime", "수시 저장", "언제든 저장되면 좋아요", "💾", a.save_style === "anytime")}
         ${optBtn("save_style", "checkpoint", "체크포인트", "스테이지 단위도 OK", "🏁", a.save_style === "checkpoint")}
       </div>
     </div>
     <div class="field">
-      <span class="field-label section-title"><i class="fa-solid fa-people-group"></i>함께 하는 방식</span>
+      <span class="field-label section-title">3. 함께 하는 방식</span>
       <div class="option-grid cols-3">
         ${optBtn("coop_mode", "solo", "혼자", "아이 단독 플레이", "👤", a.coop_mode === "solo")}
         ${optBtn("coop_mode", "helper", "부모 도움", "어시스트·동반", "🤝", a.coop_mode === "helper")}
@@ -302,7 +302,7 @@ function step3Html() {
   const modes = a.play_mode || [];
   return `
     <div class="field">
-      <span class="field-label section-title"><i class="fa-solid fa-microchip"></i>보유 하드웨어</span>
+      <span class="field-label section-title">1. 보유 하드웨어</span>
       <div class="option-grid cols-3">
         ${optBtn("hardware", "switch1", "Switch", "OLED/일반", "🟥", a.hardware === "switch1")}
         ${optBtn("hardware", "switch2", "Switch 2", "차세대", "🟦", a.hardware === "switch2")}
@@ -310,7 +310,7 @@ function step3Html() {
       </div>
     </div>
     <div class="field">
-      <span class="field-label section-title"><i class="fa-solid fa-tv"></i>플레이 화면 (복수 선택)</span>
+      <span class="field-label section-title">2. 플레이 화면 (복수 선택)</span>
       <div class="option-grid">
         ${optBtn("play_mode", "tv", "TV 모드", "독에 꽂아 TV", "📺", modes.includes("tv"))}
         ${optBtn("play_mode", "handheld", "휴대 모드", "들고 다니며", "📱", modes.includes("handheld"))}
@@ -324,7 +324,7 @@ function step4Html() {
   const chars = a.characters || [];
   return `
     <div class="field">
-      <span class="field-label section-title"><i class="fa-solid fa-star"></i>좋아하는 캐릭터 (복수 선택)</span>
+      <span class="field-label section-title">1. 좋아하는 캐릭터 (복수 선택)</span>
       <div class="option-grid">
         ${optBtn("characters", "mario", "마리오", "요시·친구들", "🍄", chars.includes("mario"))}
         ${optBtn("characters", "kirby", "커비", "별의 커비", "⭐", chars.includes("kirby"))}
@@ -333,7 +333,7 @@ function step4Html() {
       </div>
     </div>
     <div class="field">
-      <span class="field-label section-title"><i class="fa-solid fa-heart"></i>플레이 스타일</span>
+      <span class="field-label section-title">2. 플레이 스타일</span>
       <div class="option-grid cols-3">
         ${optBtn("play_style", "decorating", "꾸미기", "수집·생활", "🏡", a.play_style === "decorating")}
         ${optBtn("play_style", "adventure", "모험", "탐험·스테이지", "🗺️", a.play_style === "adventure")}
