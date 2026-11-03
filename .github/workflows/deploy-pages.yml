@@ -33,10 +33,20 @@ jobs:
       - name: Build
         run: npm run build
 
+      - name: Ensure Pages root fallbacks
+        run: |
+          test -f dist/index.html
+          cp dist/index.html dist/404.html
+          touch dist/.nojekyll
+          test -f dist/CNAME
+          # Sanity: assets must be root-relative for custom domain
+          ! grep -R "nintendo-kids-game-recommendations/assets" dist --include='*.html' --include='*.js'
+
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
           path: dist
+
 
   deploy:
     needs: build

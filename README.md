@@ -6,9 +6,11 @@
 
 푸시만 하면 GitHub Actions가 Vite로 빌드해 GitHub Pages에 올립니다.
 
-- **Live:** <https://kidgame.mymallow.cloud/>
+- **Live:** <https://kidgame.mymallow.cloud/> (and <https://kidgame.mymallow.cloud/index.html>)
 - **GitHub Pages (legacy path):** <https://jhjer010819.github.io/nintendo-kids-game-recommendations/> (custom domain preferred; build `base` is `/`)
 - **Repo:** <https://github.com/jhjer010819/nintendo-kids-game-recommendations>
+
+Pages → **Enforce HTTPS**를 켜 두면 `http://` 리다이렉트 이슈를 줄일 수 있습니다. `/`가 하얗게 보이면 강력 새로고침(캐시된 옛 HTML)을 하세요.
 
 `main`에 푸시 → Actions → Deploy GitHub Pages → 약 1–2분 후 반영.
 

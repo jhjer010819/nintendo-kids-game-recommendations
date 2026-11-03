@@ -27,14 +27,18 @@ const state = {
 const app = document.getElementById("app");
 
 async function init() {
+  app.setAttribute("data-booted", "1");
   app.innerHTML = `<div class="loading">게임 목록을 불러오는 중…</div>`;
   try {
-    const gamesUrl = `${import.meta.env.BASE_URL}data/games.json`;
+    const gamesUrl = new URL(
+      "data/games.json",
+      import.meta.env.BASE_URL || "/",
+    ).href;
     const res = await fetch(gamesUrl);
     if (!res.ok) throw new Error("games.json load failed");
     state.games = await res.json();
   } catch (err) {
-    app.innerHTML = `<div class="empty-state"><p>게임 데이터를 불러오지 못했습니다.<br>public/data/games.json 경로를 확인해 주세요.</p></div>`;
+    app.innerHTML = `<div class="empty-state"><p>게임 데이터를 불러오지 못했습니다.<br>잠시 후 새로고침하거나 <a href="/index.html">/index.html</a>로 열어 보세요.</p></div>`;
     console.error(err);
     return;
   }

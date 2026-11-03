@@ -5,6 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>우리 아이 닌텐도 Guide — 아이 맞춤 스위치 게임 추천</title>
   <meta name="description" content="학부모가 아이 성향을 입력하면 닌텐도 스위치 게임을 추천하는 마이멜로(MyMallow) 가이드. 연령·읽기·조작·안심 조건을 반영한 맞춤 추천." />
+  <link rel="canonical" href="https://kidgame.mymallow.cloud/" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%8E%AE%3C/text%3E%3C/svg%3E" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet" />
@@ -32,9 +34,24 @@
     ]
   }
   </script>
+  <script>
+    // If a cached HTML still points at missing assets, show a recovery path (not a blank page).
+    window.addEventListener("error", function (e) {
+      var t = e && e.target;
+      if (!t || (t.tagName !== "SCRIPT" && t.tagName !== "LINK")) return;
+      var app = document.getElementById("app");
+      if (!app || app.getAttribute("data-booted") === "1") return;
+      app.innerHTML =
+        '<div style="min-height:60vh;display:flex;align-items:center;justify-content:center;padding:2rem;text-align:center;font-family:system-ui,sans-serif;line-height:1.6">' +
+        "<div><p>화면을 불러오지 못했습니다. 캐시된 이전 버전일 수 있습니다.</p>" +
+        '<p><a href="/index.html">/index.html로 열기</a> · <a href="/" onclick="location.reload(true);return false;">새로고침</a></p></div></div>';
+    }, true);
+  </script>
 </head>
 <body>
-  <main id="app" aria-live="polite"></main>
+  <main id="app" aria-live="polite">
+    <div class="loading">게임 가이드를 불러오는 중…</div>
+  </main>
   <script type="module" src="./js/app.js"></script>
 </body>
 </html>
