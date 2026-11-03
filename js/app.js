@@ -1,4 +1,5 @@
 import { matchGames } from "./matching.js";
+import { withBase, GUIDE_LINKS } from "./site-paths.js";
 
 const STEPS = 4;
 
@@ -56,15 +57,87 @@ function render() {
 }
 
 function renderLanding() {
+  const guideLinks = GUIDE_LINKS.map(
+    (g) =>
+      `<li><a href="${withBase(`games/${g.slug}.html`)}">${g.title}</a></li>`,
+  ).join("");
+
   return `
-    <section class="landing" aria-label="시작">
-      <div class="brand-mark" aria-hidden="true"><i class="fa-solid fa-gamepad"></i></div>
-      <h1 class="brand-title">우리 아이 닌텐도 Guide</h1>
-      <p class="brand-sub">아이 성향에 맞는 스위치 게임을 엄마·아빠와 함께 골라 보세요.</p>
-      <button type="button" class="btn btn-primary" id="btn-start">
-        추천 시작하기 <i class="fa-solid fa-arrow-right"></i>
-      </button>
-    </section>
+    <div class="landing-page">
+      <section class="landing-hero" aria-label="시작">
+        <div class="brand-mark" aria-hidden="true"><i class="fa-solid fa-gamepad"></i></div>
+        <h1 class="brand-title">우리 아이 닌텐도 Guide</h1>
+        <p class="brand-sub">아이 성향에 맞는 스위치 게임을 엄마·아빠와 함께 골라 보세요.</p>
+        <button type="button" class="btn btn-primary" id="btn-start">
+          아이 맞춤 게임 찾기 <i class="fa-solid fa-arrow-right"></i>
+        </button>
+      </section>
+
+      <section class="landing-below" aria-label="가이드 정보">
+        <div class="soft-divider" role="presentation">아래 내용은 천천히 읽어 보세요</div>
+
+        <div class="quiet-block">
+          <h2>말랑랩 닌텐도 추천 알고리즘 소개</h2>
+          <div class="quiet-accordion">
+            <details>
+              <summary>4가지 핵심 요인</summary>
+              <div class="acc-body">
+                <ol>
+                  <li><strong>발달 눈높이</strong> — 연령·읽기·조작이 게임 난이도와 맞는지</li>
+                  <li><strong>정서 안전</strong> — 실패·폭력·자극이 가정 허용 범위 안인지</li>
+                  <li><strong>함께 놀이</strong> — 솔로·헬퍼·파티 중 집에 맞는 협동 형태</li>
+                  <li><strong>기기 현실</strong> — Switch / Lite / Switch 2·모션·TV·휴대</li>
+                </ol>
+              </div>
+            </details>
+            <details>
+              <summary>컨트롤러 숙련 LV1–LV4 기준표</summary>
+              <div class="acc-body">
+                <table class="criteria-table">
+                  <thead>
+                    <tr><th>레벨</th><th>기준 (플레이스홀더)</th></tr>
+                  </thead>
+                  <tbody>
+                    <tr><th>LV1</th><td>버튼 1~2개·모션 위주. 시점 조작 거의 없음.</td></tr>
+                    <tr><th>LV2</th><td>기본 이동 + 점프/액션. 2D 스테이지 따라가기.</td></tr>
+                    <tr><th>LV3</th><td>자이로·카메라 보조 가능. 간단한 3D 탐험.</td></tr>
+                    <tr><th>LV4</th><td>자유 시점·복합 커맨드·실시간 대전 가능.</td></tr>
+                  </tbody>
+                </table>
+                <p>위저드의 ‘서투름/보통/능숙’은 위 레벨을 가정용으로 단순화한 입력입니다.</p>
+              </div>
+            </details>
+            <details>
+              <summary>아이 성향별 짧은 사례</summary>
+              <div class="acc-body">
+                <ul class="case-list">
+                  <li><strong>글자 모르고 쉽게 포기</strong> — 음성·그림 위주 + 실패 부담 낮은 입문 플랫포머부터.</li>
+                  <li><strong>꾸미기·수집을 좋아함</strong> — 생활·꾸미기형과 낮은 폭력 허용을 함께 맞춥니다.</li>
+                  <li><strong>형제와 한 화면</strong> — 로컬 파티·헬퍼 지원 타이틀을 우선 점수로 올립니다.</li>
+                </ul>
+              </div>
+            </details>
+          </div>
+        </div>
+
+        <div class="quiet-block">
+          <h2>인기 닌텐도 게임 부모용 심층 가이드</h2>
+          <p>아래 글은 크롤러·검색용 플레이스홀더 원고입니다. 내용은 나중에 다듬을 수 있습니다.</p>
+          <ul class="guide-link-list">
+            ${guideLinks}
+          </ul>
+        </div>
+
+        <footer class="site-footer quiet-footer">
+          <nav aria-label="푸터">
+            <a href="${withBase("about.html")}">About</a>
+            <a href="${withBase("contact.html")}">Contact</a>
+            <a href="${withBase("privacy.html")}">Privacy Policy</a>
+          </nav>
+          <p class="footer-note">말랑랩 · 학부모용 닌텐도 추천 가이드</p>
+        </footer>
+      </section>
+    </div>
   `;
 }
 
