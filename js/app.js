@@ -133,6 +133,7 @@ function renderLanding() {
             <a href="${withBase("about.html")}">About</a>
             <a href="${withBase("contact.html")}">Contact</a>
             <a href="${withBase("privacy.html")}">Privacy Policy</a>
+            <a href="${withBase("terms.html")}">Terms</a>
           </nav>
           <p class="footer-note">마이멜로 (MyMallow) · 학부모용 닌텐도 추천 가이드</p>
         </footer>
