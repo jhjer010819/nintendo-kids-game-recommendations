@@ -204,7 +204,7 @@ writeFileSync(
       <h1>문의</h1>
       <p>가이드 문구 수정, 게임 데이터 오류, 협업 제안은 아래로 연락해 주세요.</p>
       <ul>
-        <li>이메일: <a href="mailto:MyMallow.Cloud@gmail.com">MyMallow.Cloud@gmail.com</a></li>
+        <li>이메일: <a href="mailto:contact@mymallow.cloud">contact@mymallow.cloud</a></li>
         <li>브랜드: 마이멜로 (MyMallow)</li>
         <li>GitHub: <a href="https://github.com/jhjer010819/nintendo-kids-game-recommendations" rel="noopener">nintendo-kids-game-recommendations</a></li>
       </ul>
@@ -226,7 +226,7 @@ writeFileSync(
       <h2>수집하는 정보</h2>
       <p>사이트 이용 과정에서 호스팅·접속 환경에 따라 IP, 브라우저 종류 등 일반적인 접속 로그가 남을 수 있습니다. 광고·분석 도구를 사용하는 경우 해당 서비스의 쿠키·기기 식별자가 수집될 수 있으며, 세부 정책은 각 제공자의 안내를 따릅니다.</p>
       <h2>문의</h2>
-      <p>개인정보 관련 문의: <a href="mailto:MyMallow.Cloud@gmail.com">MyMallow.Cloud@gmail.com</a> · <a href="./contact.html">Contact</a></p>
+      <p>개인정보 관련 문의: <a href="mailto:contact@mymallow.cloud">contact@mymallow.cloud</a> · <a href="./contact.html">Contact</a></p>
       <p>최종 업데이트: 2026-11-03</p>
     </article>`,
   }),
@@ -255,7 +255,7 @@ writeFileSync(
       <h2>6. 약관 변경</h2>
       <p>필요 시 약관을 개정할 수 있으며, 변경 내용은 본 페이지에 게시합니다. 게시 이후 서비스를 계속 이용하시면 변경에 동의한 것으로 봅니다.</p>
       <h2>7. 문의</h2>
-      <p>이용약관 관련 문의: <a href="mailto:MyMallow.Cloud@gmail.com">MyMallow.Cloud@gmail.com</a> · <a href="./contact.html">Contact</a></p>
+      <p>이용약관 관련 문의: <a href="mailto:contact@mymallow.cloud">contact@mymallow.cloud</a> · <a href="./contact.html">Contact</a></p>
       <p>개인정보 처리: <a href="./privacy.html">Privacy Policy</a></p>
       <p>시행일: 2026-11-03</p>
     </article>`,
