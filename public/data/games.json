@@ -13,6 +13,7 @@
     "lite_ok": true,
     "characters": ["커비", "kirby"],
     "play_styles": ["adventure"],
+    "session_shape": "stage",
     "mom_control": {
       "violence": "매우 낮음",
       "violence_level": "cartoon",
@@ -39,6 +40,7 @@
     "lite_ok": true,
     "characters": ["마리오", "mario"],
     "play_styles": ["adventure"],
+    "session_shape": "stage",
     "mom_control": {
       "violence": "매우 낮음",
       "violence_level": "cartoon",
@@ -65,6 +67,7 @@
     "lite_ok": true,
     "characters": ["동물주민", "animal"],
     "play_styles": ["decorating"],
+    "session_shape": "open_ended",
     "mom_control": {
       "violence": "없음",
       "violence_level": "strict",
@@ -91,6 +94,7 @@
     "lite_ok": true,
     "characters": ["포켓몬", "pokemon"],
     "play_styles": ["adventure"],
+    "session_shape": "open_ended",
     "mom_control": {
       "violence": "낮음 (배틀 연출)",
       "violence_level": "cartoon",
@@ -117,6 +121,7 @@
     "lite_ok": true,
     "characters": ["마리오", "mario"],
     "play_styles": ["sports"],
+    "session_shape": "short_match",
     "mom_control": {
       "violence": "매우 낮음",
       "violence_level": "cartoon",
@@ -141,8 +146,9 @@
     "switch_2_supported": true,
     "switch_1_supported": true,
     "lite_ok": false,
-    "characters": ["마리오", "mario"],
-    "play_styles": ["sports"],
+    "characters": [],
+    "play_styles": ["sports", "body"],
+    "session_shape": "short_match",
     "mom_control": {
       "violence": "없음",
       "violence_level": "strict",
@@ -168,7 +174,8 @@
     "switch_1_supported": true,
     "lite_ok": true,
     "characters": ["젤다"],
-    "play_styles": ["adventure"],
+    "play_styles": ["adventure", "puzzle"],
+    "session_shape": "open_ended",
     "mom_control": {
       "violence": "만화적 액션",
       "violence_level": "action",
@@ -195,6 +202,7 @@
     "lite_ok": true,
     "characters": ["잉클링"],
     "play_styles": ["sports", "adventure"],
+    "session_shape": "short_match",
     "mom_control": {
       "violence": "잉크로 칠하기 (총기 연출)",
       "violence_level": "action",
@@ -221,6 +229,7 @@
     "lite_ok": true,
     "characters": ["커비", "kirby"],
     "play_styles": ["sports", "adventure"],
+    "session_shape": "short_match",
     "mom_control": {
       "violence": "만화적 격투",
       "violence_level": "cartoon",
@@ -247,6 +256,7 @@
     "lite_ok": false,
     "characters": ["포켓몬", "pokemon"],
     "play_styles": ["adventure"],
+    "session_shape": "open_ended",
     "mom_control": {
       "violence": "매우 낮음",
       "violence_level": "cartoon",
@@ -273,6 +283,7 @@
     "lite_ok": true,
     "characters": ["마리오", "mario", "요시"],
     "play_styles": ["adventure", "decorating"],
+    "session_shape": "stage",
     "mom_control": {
       "violence": "없음",
       "violence_level": "strict",
@@ -297,8 +308,9 @@
     "switch_2_supported": false,
     "switch_1_supported": true,
     "lite_ok": false,
-    "characters": ["링", "mario"],
-    "play_styles": ["sports", "adventure"],
+    "characters": [],
+    "play_styles": ["sports", "adventure", "body"],
+    "session_shape": "stage",
     "mom_control": {
       "violence": "없음 (운동 RPG)",
       "violence_level": "strict",
@@ -310,5 +322,59 @@
     "summary": "링콘으로 운동하며 모험하는 피트니스 RPG. Switch OLED/본체가 필요하며 Lite·Switch 2 전용은 아닙니다.",
     "badge": "운동+",
     "image_emoji": "💪"
+  },
+  {
+    "id": "mario_kart_world",
+    "title": "마리오 카트 월드",
+    "min_age": 5,
+    "max_age": 99,
+    "reading_level": 1,
+    "control_difficulty": "쉬움",
+    "frustration_friendly": true,
+    "requires_motion": false,
+    "switch_2_supported": true,
+    "switch_1_supported": false,
+    "lite_ok": false,
+    "characters": ["마리오", "mario"],
+    "play_styles": ["sports"],
+    "session_shape": "short_match",
+    "mom_control": {
+      "violence": "매우 낮음 (등껍질·아이템)",
+      "violence_level": "cartoon",
+      "save_type": "레이스 후 자동 저장",
+      "save_style": "checkpoint",
+      "coop_support": "최대 4인 로컬 레이스",
+      "coop_types": ["party", "solo", "helper"]
+    },
+    "summary": "스위치 2 전용 레이스. 한 판은 짧고, 자동 가속·핸들 보조가 있어요. 코스를 자유롭게 달리는 모드도 있습니다.",
+    "badge": "스위치 2",
+    "image_emoji": "🏁"
+  },
+  {
+    "id": "donkey_kong_bananza",
+    "title": "동키콩 바난자",
+    "min_age": 8,
+    "max_age": 14,
+    "reading_level": 1,
+    "control_difficulty": "보통",
+    "frustration_friendly": false,
+    "requires_motion": false,
+    "switch_2_supported": true,
+    "switch_1_supported": false,
+    "lite_ok": false,
+    "characters": ["동키콩"],
+    "play_styles": ["adventure"],
+    "session_shape": "open_ended",
+    "mom_control": {
+      "violence": "주먹·던지기 (피 없음)",
+      "violence_level": "action",
+      "save_type": "수시 저장 가능",
+      "save_style": "anytime",
+      "coop_support": "2인 도움 플레이",
+      "coop_types": ["solo", "helper"]
+    },
+    "summary": "스위치 2 전용 3D 탐험. 주먹으로 길을 내며, 부모가 2인으로 도와줄 수 있어요. 인게임 결제가 있습니다.",
+    "badge": "스위치 2",
+    "image_emoji": "🍌"
   }
 ]

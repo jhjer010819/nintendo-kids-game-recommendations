@@ -317,6 +317,14 @@ body::before {
   gap: 8px;
   min-height: 28px;
   margin: 0 0 8px;
+  flex-wrap: wrap;
+}
+
+.q-extra {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: auto;
 }
 
 .q-title {
@@ -368,6 +376,7 @@ body::before {
   gap: 8px;
 }
 
+.chip-grid.cols-1 { grid-template-columns: 1fr; }
 .chip-grid.cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 .chip-grid.cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 
@@ -387,6 +396,7 @@ body::before {
   font-weight: 700;
   line-height: 1.25;
   text-align: center;
+  word-break: keep-all;
   cursor: pointer;
   box-shadow: none;
   -webkit-tap-highlight-color: transparent;

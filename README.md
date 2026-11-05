@@ -85,24 +85,27 @@ npm run preview -- --host 127.0.0.1 --port 5173
 | `requires_motion` | 모션 필수면 `true` (Lite에서 제외) |
 | `switch_1_supported` / `switch_2_supported` / `lite_ok` | 기기 호환 |
 | `characters` | 예: `["마리오","mario"]` — 매칭용 키워드 |
-| `play_styles` | `"decorating"` \| `"adventure"` \| `"sports"` |
-| `mom_control.violence_level` | `"strict"` \| `"cartoon"` \| `"action"` |
-| `mom_control.save_style` | `"anytime"` \| `"checkpoint"` |
+| `play_styles` | `"decorating"` \| `"adventure"` \| `"sports"` \| `"puzzle"` \| `"body"` |
+| `session_shape` | `"short_match"` 짧은 판 · `"stage"` 스테이지 · `"open_ended"` 자유 진행 |
+| `mom_control.violence_level` | `"strict"` 싸움 없음 · `"cartoon"` 통통 튕김 · `"action"` 칼·무기 (피 없음) |
+| `mom_control.save_type` | 결과 카드에만 보이는 저장 설명. 점수에는 쓰지 않음 |
+| `mom_control.save_style` | 예전 필드. 점수에 쓰지 않음 |
 | `mom_control.coop_types` | `["solo","helper","party"]` 일부 |
 | `mom_control.*` 표시 문자열 | 엄마 안심 지수에 그대로 노출 |
 | `summary` / `badge` / `image_emoji` | 카드 요약·뱃지·이모지 |
 
-시드 데이터는 약 12개입니다. 나중에 ~100개로 교체해도 UI는 그대로입니다.
+시드 데이터는 약 14개입니다. 나중에 ~100개로 교체해도 UI는 그대로입니다.
 
 ## 매칭 요약
 
-1. **하드 필터**: Lite+모션, 기기 미지원, 폭력 상한 초과, 연령·읽기 크게 불일치 → 제외
-2. **소프트 점수**: 연령·읽기·조작·좌절·폭력·저장·협동·하드웨어·캐릭터·플레이스타일 가중치 합산
-3. 일치도 `%` = score / max × 100. **35% 미만은 버림**. 상위 **최대 5개**만 표시 (부족하면 더 적게).
+1. **하드 필터**: Lite+모션, Switch 1에서 `switch_1_supported === false`(스위치 2 전용), 둘 다 미지원인 기기, 폭력 상한 초과, 연령·읽기 크게 불일치 → 제외
+2. **소프트 점수**: 연령·읽기·조작·좌절·폭력·끝맺음·협동·하드웨어·캐릭터·플레이스타일 가중치 합산. 저장 방식(anytime/checkpoint)은 점수를 올리지 않습니다.
+3. 읽기에서 `부모가 읽어줘요`는 유창(2)과 같이 보아, 글자를 모르는 선택과 달리 동물의 숲 같은 대사 게임을 빼지 않습니다.
+4. 좌절에서 `어려워도 계속 도전`은 실패에 관대한 게임을 깎지 않고, 어려운 구간에만 작은 가산을 줍니다.
+5. 일치도 `%` = score / max × 100 (최대 100). **35% 미만은 버림**. 상위 **최대 5개**만 표시 (부족하면 더 적게).
 
-## 위저드 질문 (고정)
+## 위저드 질문
 
-1. 나이 / 읽기 / 조작 / 좌절
-2. 폭력 / 저장 / 협동
-3. 하드웨어 / TV·휴대
-4. 캐릭터(복수) / 플레이 스타일
+1. 나이 / 글 읽기 / 조작 / 잘 안 풀릴 때
+2. 싸움·폭력 연출 / 게임 끝맺음 / 같이 하기(복수) / 보유 기기
+3. 캐릭터(복수) / 플레이 스타일(복수)
