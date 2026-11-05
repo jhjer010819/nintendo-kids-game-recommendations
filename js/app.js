@@ -184,11 +184,10 @@ const state = {
 const app = document.getElementById("app");
 
 const ICONS = {
-  search: '<circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/>',
   check: '<path d="M20 6L9 17l-5-5"/>',
   minus: '<path d="M6 12h12"/>',
   help: '<circle cx="12" cy="12" r="9"/><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 3-3 3"/><path d="M12 17h.01"/>',
-  corner: '<path d="M9 10l-5 5 5 5"/><path d="M20 4v7a4 4 0 0 1-4 4H4"/>',
+  corner: '<path d="M9 14 4 9l5-5"/><path d="M20 20v-7a4 4 0 0 0-4-4H4"/>',
   shield: '<path d="M12 3l8 3v6c0 5-3.4 7.6-8 9-4.6-1.4-8-4-8-9V6l8-3z"/><path d="M9 12l2 2 4-4"/>',
   info: '<circle cx="12" cy="12" r="9"/><path d="M12 11v6"/><path d="M12 8h.01"/>',
   alert: '<path d="M12 4l9 16H3L12 4z"/><path d="M12 10v4"/><path d="M12 17h.01"/>',
@@ -436,8 +435,6 @@ function nextLabel(step) {
 function renderWizard() {
   const step = currentStep();
   const pct = progressPct();
-  const parts = summaryParts();
-  const summary = parts.length ? `지금 조건 · ${parts.join(" · ")}` : "아직 고른 조건이 없어요";
   const next = nextLabel(step);
   const slide = state.slide === "back" ? "slide-back" : "slide-forward";
   return `
@@ -450,10 +447,6 @@ function renderWizard() {
           </div>
           <div class="prog-track" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${Math.round(pct)}" aria-label="완료한 단계">
             <span class="prog-fill" style="width:${pct}%"></span>
-          </div>
-          <div class="summary">
-            ${icon("search")}
-            <p class="summary-text" id="summary-text">${escapeHtml(summary)}</p>
           </div>
           <h1 class="flow-title">${step.title}</h1>
           <p class="flow-desc">${step.desc}</p>
@@ -521,11 +514,6 @@ function paintStep() {
     });
     const slot = app.querySelector(`[data-hint-for="${group.id}"]`);
     if (slot) slot.innerHTML = hintBlock(group);
-  }
-  const parts = summaryParts();
-  const summary = app.querySelector("#summary-text");
-  if (summary) {
-    summary.textContent = parts.length ? `지금 조건 · ${parts.join(" · ")}` : "아직 고른 조건이 없어요";
   }
   const next = nextLabel(step);
   const button = document.getElementById("btn-next");
