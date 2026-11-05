@@ -1,4 +1,4 @@
-import { matchGames } from "./matching.js";
+import { matchGames, READING_RANK, CONTROL_RANK, CONTROL_GAME, VIOLENCE_RANK, SESSION_RANK } from "./matching.js";
 import { withBase, GUIDE_LINKS } from "./site-paths.js";
 
 const STEP_COUNT = 3;
@@ -33,6 +33,7 @@ const WIZARD = [
           { value: "none", label: "글자 몰라요", summary: "글자 모름", hint: "음성·그림만으로 진행되는 게임 위주로 골라요." },
           { value: "basic", label: "쉬운 단어 OK", summary: "쉬운 글", hint: "짧은 안내 문구 정도면 되는 게임 위주로 골라요." },
           { value: "fluent", label: "대사도 술술", summary: "대사도 OK", hint: "스토리 대사가 있는 게임까지 포함해 골라요." },
+          { value: "parent", label: "부모가 읽어줘요", summary: "부모가 읽어줌", hint: "글은 부모가 읽어 주는 전제로, 대사가 있는 게임도 빼지 않아요." },
         ],
       },
       {
@@ -48,12 +49,13 @@ const WIZARD = [
       },
       {
         id: "frustration",
-        title: "게임에서 졌을 때",
+        title: "잘 안 풀릴 때 우리 아이는?",
         missing: "졌을 때 반응",
+        layout: "stack",
         options: [
-          { value: "easy_quit", label: "금방 그만둬", summary: "금방 그만둠", hint: "죽어도 그 자리에서 바로 이어지는 게임 위주로 골라요." },
-          { value: "normal", label: "격려하면 다시", summary: "격려하면 OK", hint: "쉬운 보상이 있어 다시 해보기 좋은 게임 위주로 골라요." },
-          { value: "persistent", label: "될 때까지 해요", summary: "될 때까지", hint: "조금 어려워도 끝까지 파고들 수 있는 게임까지 포함해요." },
+          { value: "easy_quit", label: "속상해서 쉬고 싶어해요", summary: "실패에 민감", hint: "떨어져도 그 자리에서 바로 이어지는 게임 위주로 골라요." },
+          { value: "normal", label: "다독이면 다시 해요", summary: "다독이면 다시", hint: "다독여 주면 다시 해보기 좋은 게임을 우선해요." },
+          { value: "persistent", label: "어려워도 계속 도전해요", summary: "도전 좋아함", hint: "조금 어려운 구간이 있는 게임까지 포함해요." },
         ],
       },
     ],
@@ -68,32 +70,38 @@ const WIZARD = [
     groups: [
       {
         id: "violence",
-        title: "폭력 허용",
-        missing: "폭력 허용",
-        help: "‘없는 것만’은 싸움 연출이 거의 없는 게임, ‘만화 수준’은 귀엽게 부딪히는 정도, ‘액션도 OK’는 가벼운 전투까지 포함해요.",
+        title: "싸움·폭력 연출",
+        missing: "싸움 연출",
+        layout: "stack",
+        help: "게임 속에서 캐릭터끼리 부딪히거나 싸우는 장면을 어디까지 괜찮게 보시나요?",
         options: [
-          { value: "strict", label: "없는 것만", summary: "폭력 없음", hint: "싸움·놀라는 연출이 없는 게임만 남겨요." },
-          { value: "cartoon", label: "만화 수준", summary: "만화 수준 폭력", hint: "귀엽게 부딪히거나 넘어지는 수준까지 포함해요." },
-          { value: "action", label: "액션도 OK", summary: "액션 OK", hint: "가벼운 전투가 있는 게임까지 후보에 넣어요." },
+          { value: "strict", label: "없는 게 좋아요", summary: "싸움 연출 없음", hint: "경쟁·생활·꾸미기처럼 싸우는 장면이 없는 게임만 남겨요." },
+          { value: "cartoon", label: "통통 튕기는 정도 OK", summary: "가벼운 연출", hint: "밟거나 부딪히면 통 튀어나가는 정도까지 포함해요 (마리오·커비)." },
+          { value: "action", label: "칼·무기 싸움도 OK", summary: "전투 연출 OK", hint: "검이나 무기로 적을 물리치는 장면까지 포함해요 (피 표현 없음)." },
         ],
       },
       {
-        id: "save_style",
-        title: "저장 방식",
-        missing: "저장",
+        id: "session_shape",
+        title: "게임 끝맺음",
+        missing: "끝맺음",
+        layout: "stack",
+        help: "정한 시간에 끄기 쉬운 게임을 원하시면 짧은 판을 골라주세요.",
         options: [
-          { value: "anytime", label: "언제든 저장", summary: "수시 저장", hint: "중간에 꺼도 진행이 남는 게임을 우선해요." },
-          { value: "checkpoint", label: "스테이지마다", summary: "스테이지 저장", hint: "한 판이 끝날 때 저장되는 게임도 괜찮아요." },
+          { value: "short_match", label: "짧게 한 판씩", summary: "짧은 판", hint: "5~10분이면 한 판이 끝나는 게임을 우선해요 (카트·파티·스포츠)." },
+          { value: "stage", label: "스테이지 단위 OK", summary: "스테이지 단위", hint: "한 스테이지 끝날 때 멈추기 좋은 게임까지 (마리오 원더·커비)." },
+          { value: "open_ended", label: "길게 이어져도 괜찮아요", summary: "자유 진행", hint: "끝이 정해지지 않은 생활·탐험 게임까지 포함해요 (동물의 숲·포켓몬)." },
         ],
       },
       {
         id: "coop_mode",
         title: "같이 하기",
         missing: "같이 하기",
+        multi: true,
+        help: "혼자도 하고 가끔 같이 한다면, 해당하는 것을 모두 고르세요.",
         options: [
-          { value: "solo", label: "혼자 해요", summary: "혼자", hint: "아이 혼자 끝까지 할 수 있는 게임을 우선해요." },
-          { value: "helper", label: "부모가 도와요", summary: "부모 도움", hint: "부모가 옆에서 조작을 나눠 가질 수 있는 게임을 골라요." },
-          { value: "party", label: "다 같이 해요", summary: "다 같이", hint: "한 화면에서 가족이 같이 하는 게임을 우선해요." },
+          { value: "solo", label: "혼자도 해요", summary: "혼자도", hint: "아이 혼자 끝까지 할 수 있는 게임을 포함해요." },
+          { value: "helper", label: "부모가 도와요", summary: "부모 도움", hint: "부모가 옆에서 조작을 나눠 가질 수 있는 게임을 포함해요." },
+          { value: "party", label: "다 같이 해요", summary: "다 같이", hint: "한 화면에서 가족이 같이 하는 게임을 포함해요." },
         ],
       },
       {
@@ -102,19 +110,9 @@ const WIZARD = [
         missing: "기기",
         help: "Lite는 휴대만 되는 기종이에요. TV에 꽂거나 본체를 흔들어야 하는 게임은 추천에서 빠져요.",
         options: [
-          { value: "switch1", label: "Switch", summary: "Switch", hint: "TV와 휴대를 오가는 일반 스위치 기준으로 골라요." },
-          { value: "switch2", label: "Switch 2", summary: "Switch 2", hint: "Switch 2에서 되는 게임을 우선하고, 이전 기종 게임도 함께 봐요." },
+          { value: "switch1", label: "Switch", summary: "Switch", hint: "지금 가진 스위치에서 되는 게임만 남겨요. 스위치 2 전용은 빠져요." },
+          { value: "switch2", label: "Switch 2", summary: "Switch 2", hint: "스위치 2 게임을 우선하고, 이전 기종 게임도 함께 봐요." },
           { value: "lite", label: "Lite", summary: "Lite", hint: "휴대 전용이라 모션이나 TV가 필수인 게임은 빼요." },
-        ],
-      },
-      {
-        id: "play_mode",
-        title: "플레이 화면",
-        missing: "플레이 화면",
-        multi: true,
-        options: [
-          { value: "tv", label: "TV에 연결", summary: "TV", hint: "독에 꽂아 큰 화면으로 하는 구성을 봐요." },
-          { value: "handheld", label: "들고 해요", summary: "휴대", hint: "기기를 들고 하는 구성을 봐요." },
         ],
       },
     ],
@@ -133,20 +131,23 @@ const WIZARD = [
         missing: "캐릭터",
         multi: true,
         options: [
-          { value: "mario", label: "마리오", summary: "마리오", hint: "마리오·요시처럼 점프하고 모험하는 게임에 점수를 더 줘요." },
-          { value: "kirby", label: "커비", summary: "커비", hint: "커비처럼 실패해도 다시 쉬운 게임에 점수를 더 줘요." },
-          { value: "pokemon", label: "포켓몬", summary: "포켓몬", hint: "수집하고 키우는 게임에 점수를 더 줘요." },
-          { value: "animal", label: "동물의 숲", summary: "동물의 숲", hint: "집을 가꾸고 생활하는 게임에 점수를 더 줘요." },
+          { value: "mario", label: "마리오", summary: "마리오", hint: "마리오와 요시가 나오는 게임을 더 봐요." },
+          { value: "kirby", label: "커비", summary: "커비", hint: "동그란 커비가 나오는 게임을 더 봐요." },
+          { value: "pokemon", label: "포켓몬", summary: "포켓몬", hint: "피카츄 등 포켓몬이 나오는 게임을 더 봐요." },
+          { value: "animal", label: "동물의 숲", summary: "동물의 숲", hint: "동물의 숲 주민과 섬이 나오는 게임을 더 봐요." },
         ],
       },
       {
         id: "play_style",
         title: "플레이 스타일",
         missing: "플레이 스타일",
+        multi: true,
         options: [
           { value: "decorating", label: "꾸미기", summary: "꾸미기", hint: "섬·집을 가꾸고 모으는 게임을 우선해요." },
-          { value: "adventure", label: "모험", summary: "모험", hint: "스테이지를 깨며 앞으로 가는 게임을 우선해요." },
-          { value: "sports", label: "스포츠·대결", summary: "스포츠", hint: "짧은 한 판으로 끝나는 게임을 우선해요." },
+          { value: "adventure", label: "모험", summary: "모험", hint: "앞으로 탐험하며 진행하는 게임을 우선해요." },
+          { value: "sports", label: "스포츠·대결", summary: "스포츠", hint: "짧은 한 판으로 겨루는 게임을 우선해요." },
+          { value: "puzzle", label: "퍼즐", summary: "퍼즐", hint: "길을 찾고 수수께끼를 푸는 게임을 우선해요." },
+          { value: "body", label: "몸으로 놀기", summary: "몸으로 놀기", hint: "조이콘이나 링을 움직여 몸으로 하는 게임을 우선해요." },
         ],
       },
     ],
@@ -160,12 +161,11 @@ function blankAnswers() {
     control: null,
     frustration: null,
     violence: null,
-    save_style: null,
-    coop_mode: null,
+    session_shape: null,
+    coop_mode: [],
     hardware: null,
-    play_mode: [],
     characters: [],
-    play_style: null,
+    play_style: [],
   };
 }
 
@@ -266,7 +266,7 @@ function renderLanding() {
                   <li><strong>발달 눈높이</strong> — 연령·읽기·조작이 게임 난이도와 맞는지</li>
                   <li><strong>정서 안전</strong> — 실패·폭력·자극이 가정 허용 범위 안인지</li>
                   <li><strong>함께 놀이</strong> — 솔로·헬퍼·파티 중 집에 맞는 협동 형태</li>
-                  <li><strong>기기 현실</strong> — Switch / Lite / Switch 2·모션·TV·휴대</li>
+                  <li><strong>기기 현실</strong> — Switch / Switch 2 / Lite와 모션 조작</li>
                 </ol>
               </div>
             </details>
@@ -353,9 +353,6 @@ function activeHint(group) {
   if (group.multi) {
     const picked = Array.isArray(value) ? value : [];
     if (!picked.length) return "";
-    if (group.id === "play_mode" && picked.length > 1) {
-      return "TV와 휴대 둘 다 되는 게임을 우선해요.";
-    }
     const last = state.lastPicked[group.id];
     const key = picked.includes(last) ? last : picked[picked.length - 1];
     return group.options.find((opt) => opt.value === key)?.hint || "";
@@ -383,9 +380,14 @@ function progressPct() {
   return ((state.step - 1) / STEP_COUNT) * 100;
 }
 
+function chipColumns(group) {
+  if (group.layout === "stack") return 1;
+  return group.options.length === 3 ? 3 : 2;
+}
+
 function chipHtml(group) {
   const selected = selectedValues(group);
-  const cols = group.options.length === 3 ? 3 : 2;
+  const cols = chipColumns(group);
   const buttons = group.options
     .map((opt) => {
       const on = selected.has(opt.value);
@@ -406,11 +408,13 @@ function hintBlock(group) {
 }
 
 function groupHtml(group) {
-  const headExtra = group.help
-    ? `<button type="button" class="help-btn" aria-expanded="false" aria-controls="help-${group.id}">${icon("help")}<span>헷갈려요</span></button>`
-    : group.multi
-      ? `<span class="q-note">여러 개 가능</span>`
-      : "";
+  const extras = [
+    group.multi ? `<span class="q-note">여러 개 가능</span>` : "",
+    group.help
+      ? `<button type="button" class="help-btn" aria-expanded="false" aria-controls="help-${group.id}">${icon("help")}<span>헷갈려요</span></button>`
+      : "",
+  ].filter(Boolean).join("");
+  const headExtra = extras ? `<div class="q-extra">${extras}</div>` : "";
   const help = group.help
     ? `<div class="help-panel" id="help-${group.id}" hidden><p>${escapeHtml(group.help)}</p></div>`
     : "";
@@ -583,49 +587,69 @@ function ageBand(ageKey) {
   return map[ageKey] || [5, 10];
 }
 
+const SESSION_COPY = {
+  short_match: "짧은 한 판",
+  stage: "스테이지 단위",
+  open_ended: "자유롭게 이어짐",
+};
+
+function pickedList(value) {
+  if (Array.isArray(value)) return value.filter(Boolean);
+  return value ? [value] : [];
+}
+
 function buildChecks(game, answers) {
   const mom = game.mom_control || {};
-  const userR = { none: 0, basic: 1, fluent: 2 }[answers.reading] ?? 1;
+  const userR = READING_RANK[answers.reading] ?? 1;
   const needR = game.reading_level ?? 0;
   const readingValue = ["그림·음성으로 진행", "짧은 안내 문구 위주", "스토리 대사를 읽어야 함"][needR] || "짧은 안내 문구 위주";
-  const userC = { beginner: 0, average: 1, skilled: 2 }[answers.control] ?? 1;
-  const gameC = { 쉬움: 0, 보통: 1, 어려움: 2 }[game.control_difficulty] ?? 1;
+  const userC = CONTROL_RANK[answers.control] ?? 1;
+  const gameC = CONTROL_GAME[game.control_difficulty] ?? 1;
   const controlValue = ["이동·점프, 카메라 자동", "점프와 방향, 카메라 보조", "3D 시점과 여러 버튼"][gameC];
-  const userV = { strict: 0, cartoon: 1, action: 2 }[answers.violence] ?? 1;
-  const gameV = { strict: 0, cartoon: 1, action: 2 }[mom.violence_level] ?? 1;
-  const violenceValue = {
+  const userV = VIOLENCE_RANK[answers.violence] ?? 1;
+  const gameV = VIOLENCE_RANK[mom.violence_level] ?? 1;
+  const violenceValue = mom.violence || {
     strict: "싸움 연출 없음",
-    cartoon: "만화 수준, 무섭지 않음",
-    action: "액션 연출이 있어요",
-  }[mom.violence_level] || mom.violence || "—";
+    cartoon: "통통 튕기는 정도",
+    action: "칼·무기 싸움 (피 없음)",
+  }[mom.violence_level] || "—";
   const [lo, hi] = ageBand(answers.age);
   const ageOk = game.min_age <= hi + 1 && (game.max_age ?? 99) >= lo;
-  const saveOk = !answers.save_style
-    || mom.save_style === answers.save_style
-    || (answers.save_style === "checkpoint" && mom.save_style === "anytime");
-  const saveValue = mom.save_style === "checkpoint"
-    ? "스테이지 끝날 때 자동"
-    : (mom.save_type || "자주 자동 저장");
-  const coopOk = (mom.coop_types || []).includes(answers.coop_mode);
+  const userS = SESSION_RANK[answers.session_shape];
+  const gameS = SESSION_RANK[game.session_shape];
+  const sessionOk = userS == null || gameS == null || gameS <= userS;
+  const sessionValue = `${SESSION_COPY[game.session_shape] || "끝맺음 정보 없음"} · ${mom.save_type || "저장 정보 없음"}`;
+  const pickedCoop = pickedList(answers.coop_mode);
+  const coopTypes = mom.coop_types || [];
+  const coopOk = pickedCoop.length > 0 && pickedCoop.every((mode) => coopTypes.includes(mode));
   return [
     { label: "연령", value: `만 ${game.min_age}세부터 추천`, ok: ageOk },
     { label: "글 읽기", value: readingValue, ok: userR >= needR },
     { label: "조작", value: controlValue, ok: userC >= gameC },
     { label: "폭력 표현", value: violenceValue, ok: gameV <= userV },
-    { label: "저장", value: saveValue, ok: saveOk },
+    { label: "끝맺음", value: sessionValue, ok: sessionOk },
     { label: "함께하기", value: mom.coop_support || "—", ok: coopOk },
   ];
 }
 
 function verdictOf(game, answers, checks) {
   const byLabel = Object.fromEntries(checks.map((item) => [item.label, item.ok]));
-  const action = game.mom_control?.violence_level === "action";
-  const userR = { none: 0, basic: 1, fluent: 2 }[answers.reading] ?? 1;
-  const userC = { beginner: 0, average: 1, skilled: 2 }[answers.control] ?? 1;
-  const gameC = { 쉬움: 0, 보통: 1, 어려움: 2 }[game.control_difficulty] ?? 1;
+  const userR = READING_RANK[answers.reading] ?? 1;
+  const userC = CONTROL_RANK[answers.control] ?? 1;
+  const gameC = CONTROL_GAME[game.control_difficulty] ?? 1;
+  const userV = VIOLENCE_RANK[answers.violence] ?? 1;
+  const gameV = VIOLENCE_RANK[game.mom_control?.violence_level] ?? 1;
   const fragile = answers.frustration === "easy_quit" && !game.frustration_friendly;
-  const kartAssist = game.id === "mario_kart8" && answers.control !== "skilled";
-  if (action || userR < (game.reading_level ?? 0) || userC < gameC || fragile || kartAssist || !byLabel["폭력 표현"]) {
+  const kartAssist = (game.id === "mario_kart8" || game.id === "mario_kart_world") && answers.control !== "skilled";
+  const violenceOver = gameV > userV || byLabel["폭력 표현"] === false;
+  if (
+    userR < (game.reading_level ?? 0)
+    || userC < gameC
+    || fragile
+    || kartAssist
+    || violenceOver
+    || byLabel["끝맺음"] === false
+  ) {
     return "care";
   }
   return "safe";
@@ -639,16 +663,23 @@ function cautionNotes(game, answers) {
   if (game.id === "mario_kart8" && answers.control !== "skilled") {
     notes.push("스마트 스티어링은 일시정지 메뉴에서 켤 수 있어요.");
   }
+  if (game.id === "mario_kart_world" && answers.control !== "skilled") {
+    notes.push("자동 가속과 핸들 보조를 켜면 코스를 끝까지 달리기 쉬워요.");
+  }
   if (game.requires_motion) {
     notes.push("조이콘을 움직여야 해서 테이블에 내려놓고 하는 플레이는 어려워요.");
   }
-  if (game.mom_control?.violence_level === "action") {
-    notes.push("만화보다 액션 연출이 있어요. 첫 판은 옆에서 같이 확인해 주세요.");
+  const userV = VIOLENCE_RANK[answers.violence] ?? 1;
+  const gameV = VIOLENCE_RANK[game.mom_control?.violence_level] ?? 1;
+  if (gameV > userV) {
+    notes.push("허용한 것보다 싸움 연출이 강해요. 첫 판은 옆에서 같이 확인해 주세요.");
   }
-  if (answers.save_style === "anytime" && game.mom_control?.save_style === "checkpoint") {
-    notes.push("스테이지 중간에는 저장이 안 되고, 판이 끝날 때 남아요.");
+  const userS = SESSION_RANK[answers.session_shape];
+  const gameS = SESSION_RANK[game.session_shape];
+  if (userS != null && gameS != null && gameS > userS) {
+    notes.push("한 판이 고른 것보다 길어질 수 있어요. 끌 시간을 미리 정해 주세요.");
   }
-  const userR = { none: 0, basic: 1, fluent: 2 }[answers.reading] ?? 1;
+  const userR = READING_RANK[answers.reading] ?? 1;
   if (userR < (game.reading_level ?? 0)) {
     notes.push("화면에 글이 나와요. 부모가 한 줄씩 읽어 주면 진행이 쉬워요.");
   }
@@ -678,6 +709,10 @@ function pitchFor(game, answers) {
     kirby_fighters2: "한 판이 짧아 가족이 바로 붙어 놀기 좋아요. 맞으면 통통 튀어 오르는 연출이에요.",
     pokemon_letsgo: "공을 던지는 동작으로 포켓몬을 만나요. 처음 조작은 부모가 한 번 보여 주세요.",
     ring_fit: "링을 밀고 당기며 움직이는 운동 모험이에요. 하루 시간을 정해 두고 하는 편이 좋아요.",
+    mario_kart_world: answers.control === "skilled"
+      ? "스위치 2 전용 짧은 레이스예요. 가족이 바로 한 판 달릴 수 있어요."
+      : "스위치 2 전용 레이스예요. 자동 가속·핸들 보조를 켜면 짧은 판으로 같이 달릴 수 있어요.",
+    donkey_kong_bananza: "스위치 2 전용 탐험이에요. 주먹으로 길을 내고, 부모가 2인으로 도와줄 수 있어요. 인게임 결제가 있습니다.",
   };
   return pitches[game.id] || game.summary || "";
 }

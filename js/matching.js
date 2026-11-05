@@ -3,10 +3,11 @@
  * Returns up to 5 ranked results with matchPct; hard filters drop incompatible titles.
  */
 
-const READING_MAP = { none: 0, basic: 1, fluent: 2 };
-const CONTROL_MAP = { beginner: 0, average: 1, skilled: 2 };
-const CONTROL_GAME = { 쉬움: 0, 보통: 1, 어려움: 2 };
-const VIOLENCE_RANK = { strict: 0, cartoon: 1, action: 2 };
+export const READING_RANK = { none: 0, basic: 1, fluent: 2, parent: 2 };
+export const CONTROL_RANK = { beginner: 0, average: 1, skilled: 2 };
+export const CONTROL_GAME = { 쉬움: 0, 보통: 1, 어려움: 2 };
+export const VIOLENCE_RANK = { strict: 0, cartoon: 1, action: 2 };
+export const SESSION_RANK = { short_match: 0, stage: 1, open_ended: 2 };
 
 const WEIGHTS = {
   age: 18,
@@ -14,13 +15,18 @@ const WEIGHTS = {
   control: 12,
   frustration: 10,
   violence: 14,
-  save: 8,
+  session: 8,
   coop: 10,
   hardware: 10,
   character: 10,
   playStyle: 8,
-  playMode: 4,
 };
+
+function asList(value) {
+  if (Array.isArray(value)) return value.filter(Boolean);
+  if (value) return [value];
+  return [];
+}
 
 function ageMid(ageKey) {
   const map = {
@@ -54,7 +60,7 @@ export function matchGames(games, answers) {
     if (!hard.ok) continue;
 
     const { score, max, reasons } = softScore(game, answers);
-    const matchPct = Math.round((score / max) * 100);
+    const matchPct = Math.min(100, Math.round((score / max) * 100));
     if (matchPct < 35) continue;
 
     scored.push({
@@ -70,33 +76,33 @@ export function matchGames(games, answers) {
 }
 
 function hardFilter(game, a) {
-  // Hardware
   if (a.hardware === "lite") {
     if (game.requires_motion || game.lite_ok === false) {
       return { ok: false, reason: "lite" };
     }
   }
+  // Switch 1 cannot run Switch 2 exclusives.
   if (a.hardware === "switch1") {
     if (game.switch_1_supported === false) return { ok: false, reason: "switch1" };
   }
   if (a.hardware === "switch2") {
-    // Prefer titles that support Switch 2; exclusives without support are out
-    if (game.switch_2_supported === false && game.switch_1_supported === false) {
-      return { ok: false, reason: "switch2" };
-    }
+    const onSwitch2 = game.switch_2_supported !== false;
+    const onSwitch1 = game.switch_1_supported !== false;
+    // Native Switch 2 and backward-compatible Switch 1 titles stay.
+    // Only titles that support neither are dropped.
+    if (!onSwitch2 && !onSwitch1) return { ok: false, reason: "switch2" };
   }
 
-  // Violence ceiling: user strict → only strict; cartoon → strict|cartoon; action → all
   const userV = VIOLENCE_RANK[a.violence] ?? 1;
   const gameV = VIOLENCE_RANK[game.mom_control?.violence_level] ?? 1;
   if (gameV > userV) return { ok: false, reason: "violence" };
 
-  // Age: reject if game min_age is far above child's max band
   const [, hi] = ageRange(a.age);
   if (game.min_age > hi + 2) return { ok: false, reason: "age" };
 
-  // Reading: reject if game needs fluent and child has none
-  const userR = READING_MAP[a.reading] ?? 1;
+  // "글자 몰라요" (0) still drops a game two steps above (Animal Crossing is 2).
+  // "부모가 읽어줘요" ranks as fluent so an adult reading aloud keeps those games.
+  const userR = READING_RANK[a.reading] ?? 1;
   if ((game.reading_level ?? 0) - userR >= 2) return { ok: false, reason: "reading" };
 
   return { ok: true };
@@ -107,7 +113,6 @@ function softScore(game, a) {
   let max = 0;
   const reasons = [];
 
-  // Age
   max += WEIGHTS.age;
   const mid = ageMid(a.age);
   const [lo, hi] = ageRange(a.age);
@@ -120,21 +125,20 @@ function softScore(game, a) {
     score += WEIGHTS.age * 0.2;
   }
 
-  // Reading
   max += WEIGHTS.reading;
-  const userR = READING_MAP[a.reading] ?? 1;
+  const userR = READING_RANK[a.reading] ?? 1;
   const need = game.reading_level ?? 0;
   const rDiff = Math.abs(userR - need);
   if (userR >= need) {
     score += WEIGHTS.reading * (rDiff === 0 ? 1 : 0.85);
-    reasons.push("읽기 수준 OK");
+    if (a.reading === "parent" && need > 0) reasons.push("부모가 읽어 주면 진행");
+    else reasons.push("읽기 수준 OK");
   } else if (need - userR === 1) {
     score += WEIGHTS.reading * 0.45;
   }
 
-  // Control
   max += WEIGHTS.control;
-  const userC = CONTROL_MAP[a.control] ?? 1;
+  const userC = CONTROL_RANK[a.control] ?? 1;
   const gameC = CONTROL_GAME[game.control_difficulty] ?? 1;
   if (userC >= gameC) {
     score += WEIGHTS.control;
@@ -143,56 +147,69 @@ function softScore(game, a) {
     score += WEIGHTS.control * 0.4;
   }
 
-  // Frustration
+  // easy_quit prefers frustration_friendly.
+  // persistent keeps full credit for friendly games and only lightly prefers harder ones.
   max += WEIGHTS.frustration;
   if (a.frustration === "easy_quit") {
     if (game.frustration_friendly) {
       score += WEIGHTS.frustration;
-      reasons.push("포기하지 않게 설계됨");
+      reasons.push("실패해도 바로 이어짐");
     }
   } else if (a.frustration === "normal") {
     score += game.frustration_friendly ? WEIGHTS.frustration : WEIGHTS.frustration * 0.7;
+  } else if (a.frustration === "persistent") {
+    score += WEIGHTS.frustration;
+    if (!game.frustration_friendly) score += 2;
   } else {
-    // persistent
-    score += WEIGHTS.frustration * (game.frustration_friendly ? 0.75 : 1);
+    score += WEIGHTS.frustration * 0.5;
   }
 
-  // Violence (already hard-filtered; reward exact/safer)
+  // Violence is already a hard ceiling. Don't emit a generic "safe" reason:
+  // every survivor would qualify. Mention it only when the game is gentler
+  // than the ceiling the parent actually set.
   max += WEIGHTS.violence;
   const userV = VIOLENCE_RANK[a.violence] ?? 1;
   const gameV = VIOLENCE_RANK[game.mom_control?.violence_level] ?? 1;
   if (gameV <= userV) {
     score += WEIGHTS.violence * (gameV === userV ? 1 : 0.9);
-    reasons.push("폭력 수준 안전");
+    if (gameV < userV) reasons.push("허용한 연출보다 순한 편");
   }
 
-  // Save
-  max += WEIGHTS.save;
-  const save = game.mom_control?.save_style;
-  if (save === a.save_style) {
-    score += WEIGHTS.save;
-    reasons.push("저장 방식 선호");
-  } else if (a.save_style === "anytime" && save === "checkpoint") {
-    score += WEIGHTS.save * 0.35;
-  } else if (a.save_style === "checkpoint" && save === "anytime") {
-    score += WEIGHTS.save * 0.7;
+  // Session length is the preference. save_style is display text only and
+  // must not rank "anytime" as easier than "checkpoint".
+  max += WEIGHTS.session;
+  const userS = SESSION_RANK[a.session_shape];
+  const gameS = SESSION_RANK[game.session_shape];
+  if (userS == null || gameS == null) {
+    score += WEIGHTS.session * 0.5;
+  } else if (gameS <= userS) {
+    score += WEIGHTS.session * (gameS === userS ? 1 : 0.85);
+    if (gameS === userS) reasons.push("끝맺음 맞음");
+  } else if (gameS === userS + 1) {
+    score += WEIGHTS.session * 0.4;
+  } else {
+    score += WEIGHTS.session * 0.15;
   }
 
-  // Coop
   max += WEIGHTS.coop;
+  const pickedCoop = asList(a.coop_mode);
   const coopTypes = game.mom_control?.coop_types || [];
-  if (coopTypes.includes(a.coop_mode)) {
+  const coopHits = pickedCoop.filter((mode) => coopTypes.includes(mode)).length;
+  const helperViaParty =
+    pickedCoop.includes("helper") && !coopTypes.includes("helper") && coopTypes.includes("party");
+  if (pickedCoop.length === 0) {
+    score += WEIGHTS.coop * 0.4;
+  } else if (coopHits === pickedCoop.length) {
     score += WEIGHTS.coop;
-    reasons.push("협동 모드 맞음");
-  } else if (a.coop_mode === "solo" && coopTypes.includes("solo")) {
-    score += WEIGHTS.coop;
-  } else if (a.coop_mode === "helper" && coopTypes.includes("party")) {
+    reasons.push("함께 하기 맞음");
+  } else if (coopHits > 0) {
+    score += WEIGHTS.coop * (0.4 + 0.45 * (coopHits / pickedCoop.length));
+  } else if (helperViaParty) {
     score += WEIGHTS.coop * 0.5;
   } else {
     score += WEIGHTS.coop * 0.15;
   }
 
-  // Hardware soft bonus
   max += WEIGHTS.hardware;
   if (a.hardware === "switch2" && game.switch_2_supported) {
     score += WEIGHTS.hardware;
@@ -206,9 +223,8 @@ function softScore(game, a) {
     score += WEIGHTS.hardware * 0.3;
   }
 
-  // Characters (multi select)
   max += WEIGHTS.character;
-  const chars = (a.characters || []).map((c) => c.toLowerCase());
+  const chars = asList(a.characters).map((c) => c.toLowerCase());
   if (chars.length === 0) {
     score += WEIGHTS.character * 0.5;
   } else {
@@ -224,25 +240,19 @@ function softScore(game, a) {
     }
   }
 
-  // Play style
   max += WEIGHTS.playStyle;
+  const pickedStyles = asList(a.play_style);
   const styles = game.play_styles || [];
-  if (a.play_style && styles.includes(a.play_style)) {
-    score += WEIGHTS.playStyle;
-    reasons.push("플레이 스타일 일치");
+  if (pickedStyles.length === 0) {
+    score += WEIGHTS.playStyle * 0.5;
   } else {
-    score += WEIGHTS.playStyle * 0.25;
-  }
-
-  // Play mode (tv / handheld) — soft, most Switch titles support both
-  max += WEIGHTS.playMode;
-  const modes = a.play_mode || [];
-  if (modes.length === 0) {
-    score += WEIGHTS.playMode * 0.5;
-  } else if (a.hardware === "lite" && modes.includes("tv") && !modes.includes("handheld")) {
-    score += WEIGHTS.playMode * 0.3;
-  } else {
-    score += WEIGHTS.playMode;
+    const styleHits = pickedStyles.filter((style) => styles.includes(style)).length;
+    if (styleHits > 0) {
+      score += WEIGHTS.playStyle * (0.55 + 0.45 * (styleHits / pickedStyles.length));
+      reasons.push("플레이 스타일 일치");
+    } else {
+      score += WEIGHTS.playStyle * 0.25;
+    }
   }
 
   return { score, max, reasons };
