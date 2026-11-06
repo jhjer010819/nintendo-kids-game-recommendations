@@ -182,6 +182,8 @@ const state = {
 };
 
 const app = document.getElementById("app");
+const landingMarkup = app?.querySelector(".landing-page")?.outerHTML ?? "";
+let startRequested = false;
 
 const ICONS = {
   check: '<path d="M20 6L9 17l-5-5"/>',
@@ -201,7 +203,12 @@ function icon(name) {
 
 async function init() {
   app.setAttribute("data-booted", "1");
-  app.innerHTML = `<div class="loading">게임 목록을 불러오는 중…</div>`;
+  const hasLanding = Boolean(landingMarkup);
+  if (!hasLanding) {
+    app.innerHTML = `<div class="loading">게임 목록을 불러오는 중…</div>`;
+  } else {
+    bindLanding();
+  }
   try {
     const gamesUrl = new URL(
       `${import.meta.env.BASE_URL || "/"}data/games.json`,
@@ -215,7 +222,11 @@ async function init() {
     console.error(err);
     return;
   }
-  render();
+  if (startRequested) {
+    beginWizard();
+    return;
+  }
+  if (!hasLanding) render();
 }
 
 function render() {
@@ -236,11 +247,7 @@ function render() {
 }
 
 function renderLanding() {
-  const guideLinks = GUIDE_LINKS.map(
-    (g) =>
-      `<li><a href="${withBase(`games/${g.slug}.html`)}">${g.title}</a></li>`,
-  ).join("");
-
+  if (landingMarkup) return landingMarkup;
   return `
     <div class="landing-page">
       <section class="landing-hero" aria-label="시작">
@@ -252,83 +259,25 @@ function renderLanding() {
           딱 맞는 게임 찾기 <i class="fa-solid fa-arrow-right"></i>
         </button>
       </section>
-
-      <section class="landing-below" aria-label="가이드 정보">
-        <div class="soft-divider" role="presentation">아래 내용은 천천히 읽어 보세요</div>
-
-        <div class="quiet-block">
-          <h2>마이멜로 닌텐도 추천 알고리즘 소개</h2>
-          <div class="quiet-accordion">
-            <details>
-              <summary>4가지 핵심 요인</summary>
-              <div class="acc-body">
-                <ol>
-                  <li><strong>발달 눈높이</strong> — 연령·읽기·조작이 게임 난이도와 맞는지</li>
-                  <li><strong>정서 안전</strong> — 실패·폭력·자극이 가정 허용 범위 안인지</li>
-                  <li><strong>함께 놀이</strong> — 솔로·헬퍼·파티 중 집에 맞는 협동 형태</li>
-                  <li><strong>기기 현실</strong> — Switch / Switch 2 / Lite와 모션 조작</li>
-                </ol>
-              </div>
-            </details>
-            <details>
-              <summary>컨트롤러 숙련 LV1–LV4 기준표</summary>
-              <div class="acc-body">
-                <table class="criteria-table">
-                  <thead>
-                    <tr><th>레벨</th><th>기준</th></tr>
-                  </thead>
-                  <tbody>
-                    <tr><th>LV1</th><td>버튼 1~2개·모션 위주. 시점 조작 거의 없음.</td></tr>
-                    <tr><th>LV2</th><td>기본 이동 + 점프/액션. 2D 스테이지 따라가기.</td></tr>
-                    <tr><th>LV3</th><td>자이로·카메라 보조 가능. 간단한 3D 탐험.</td></tr>
-                    <tr><th>LV4</th><td>자유 시점·복합 커맨드·실시간 대전 가능.</td></tr>
-                  </tbody>
-                </table>
-                <p>위저드의 ‘서투름/보통/능숙’은 위 레벨을 가정용으로 단순화한 입력입니다.</p>
-              </div>
-            </details>
-            <details>
-              <summary>아이 성향별 짧은 사례</summary>
-              <div class="acc-body">
-                <ul class="case-list">
-                  <li><strong>글자 모르고 쉽게 포기</strong> — 음성·그림 위주 + 실패 부담 낮은 입문 플랫포머부터.</li>
-                  <li><strong>꾸미기·수집을 좋아함</strong> — 생활·꾸미기형과 낮은 폭력 허용을 함께 맞춥니다.</li>
-                  <li><strong>형제와 한 화면</strong> — 로컬 파티·헬퍼 지원 타이틀을 우선 점수로 올립니다.</li>
-                </ul>
-              </div>
-            </details>
-          </div>
-        </div>
-
-        <div class="quiet-block">
-          <h2>인기 닌텐도 게임 부모용 심층 가이드</h2>
-          <p>구매 전에 연령·조작·안심 포인트를 짧게 정리한 마이멜로 가이드입니다.</p>
-          <ul class="guide-link-list">
-            ${guideLinks}
-          </ul>
-        </div>
-
-        <footer class="site-footer quiet-footer">
-          <nav aria-label="푸터">
-            <a href="${withBase("about.html")}">About</a>
-            <a href="${withBase("contact.html")}">Contact</a>
-            <a href="${withBase("privacy.html")}">Privacy Policy</a>
-            <a href="${withBase("terms.html")}">Terms</a>
-          </nav>
-          <p class="footer-note">마이멜로 (MyMallow) · 학부모용 닌텐도 추천 가이드</p>
-        </footer>
-      </section>
     </div>
   `;
 }
 
+function beginWizard() {
+  resetAnswers();
+  state.view = "step";
+  state.step = 1;
+  state.slide = "forward";
+  render();
+}
+
 function bindLanding() {
   document.getElementById("btn-start")?.addEventListener("click", () => {
-    resetAnswers();
-    state.view = "step";
-    state.step = 1;
-    state.slide = "forward";
-    render();
+    if (!state.games.length) {
+      startRequested = true;
+      return;
+    }
+    beginWizard();
   });
 }
 
