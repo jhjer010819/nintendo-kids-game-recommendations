@@ -1,4 +1,4 @@
-import { matchGames, READING_RANK, CONTROL_RANK, CONTROL_GAME, VIOLENCE_RANK, SESSION_RANK } from "./matching.js";
+import { matchGames, READING_RANK, VIOLENCE_RANK, SESSION_RANK } from "./matching.js";
 import { withBase, GUIDE_LINKS } from "./site-paths.js";
 
 const STEP_COUNT = 3;
@@ -135,6 +135,13 @@ const WIZARD = [
           { value: "kirby", label: "커비", summary: "커비", hint: "동그란 커비가 나오는 게임을 더 봐요." },
           { value: "pokemon", label: "포켓몬", summary: "포켓몬", hint: "피카츄 등 포켓몬이 나오는 게임을 더 봐요." },
           { value: "animal", label: "동물의 숲", summary: "동물의 숲", hint: "동물의 숲 주민과 섬이 나오는 게임을 더 봐요." },
+          {
+            value: "none",
+            label: "없음",
+            summary: "없음",
+            exclusive: true,
+            hint: "좋아하는 캐릭터가 없어도 돼요. 특정 시리즈를 더 추천하지 않아요.",
+          },
         ],
       },
       {
@@ -177,7 +184,6 @@ const state = {
   answers: blankAnswers(),
   results: [],
   lastPicked: {},
-  open: {},
   busy: false,
 };
 
@@ -187,14 +193,9 @@ let startRequested = false;
 
 const ICONS = {
   check: '<path d="M20 6L9 17l-5-5"/>',
-  minus: '<path d="M6 12h12"/>',
   help: '<circle cx="12" cy="12" r="9"/><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 3-3 3"/><path d="M12 17h.01"/>',
   corner: '<path d="M15 10 20 15l-5 5"/><path d="M4 4v7a4 4 0 0 0 4 4h12"/>',
-  shield: '<path d="M12 3l8 3v6c0 5-3.4 7.6-8 9-4.6-1.4-8-4-8-9V6l8-3z"/><path d="M9 12l2 2 4-4"/>',
-  info: '<circle cx="12" cy="12" r="9"/><path d="M12 11v6"/><path d="M12 8h.01"/>',
   alert: '<path d="M12 4l9 16H3L12 4z"/><path d="M12 10v4"/><path d="M12 17h.01"/>',
-  chevDown: '<path d="M6 9l6 6 6-6"/>',
-  chevUp: '<path d="M6 15l6-6 6 6"/>',
 };
 
 function icon(name) {
@@ -310,21 +311,6 @@ function activeHint(group) {
   return group.options.find((opt) => opt.value === value)?.hint || "";
 }
 
-function summaryParts() {
-  const parts = [];
-  for (const step of WIZARD) {
-    for (const group of step.groups) {
-      const value = state.answers[group.id];
-      const chosen = group.multi ? (Array.isArray(value) ? value : []) : value ? [value] : [];
-      for (const key of chosen) {
-        const opt = group.options.find((item) => item.value === key);
-        if (opt) parts.push(opt.summary || opt.label);
-      }
-    }
-  }
-  return parts;
-}
-
 function progressPct() {
   return ((state.step - 1) / STEP_COUNT) * 100;
 }
@@ -340,8 +326,9 @@ function chipHtml(group) {
   const buttons = group.options
     .map((opt) => {
       const on = selected.has(opt.value);
+      const wide = opt.exclusive ? " chip-wide" : "";
       return `
-        <button type="button" class="chip${on ? " is-on" : ""}" data-group="${group.id}" data-value="${opt.value}" aria-pressed="${on ? "true" : "false"}">
+        <button type="button" class="chip${on ? " is-on" : ""}${wide}" data-group="${group.id}" data-value="${opt.value}" aria-pressed="${on ? "true" : "false"}">
           <span class="chip-check">${icon("check")}</span>
           <span class="chip-label">${opt.label}</span>
         </button>`;
@@ -407,7 +394,7 @@ function renderWizard() {
             ${step.groups.map(groupHtml).join("")}
           </div>
           <button type="button" class="next-btn ${next.ready ? "is-ready" : "is-pending"}" id="btn-next">${escapeHtml(next.text)}</button>
-          <p class="fine-print">고른 내용은 결과 화면에서 언제든 바꿀 수 있어요</p>
+          <p class="fine-print">처음부터 다시 고르려면 결과 맨 아래의 다시하기를 눌러 주세요</p>
           <button type="button" class="back-link" id="btn-back">${step.id === 1 ? "처음으로" : "이전"}</button>
           <p id="step-status" class="sr-only" aria-live="polite"></p>
         </div>
@@ -443,12 +430,20 @@ function onChip(chip) {
   if (!group) return;
   const value = chip.dataset.value;
   if (group.multi) {
-    const arr = Array.isArray(state.answers[group.id]) ? state.answers[group.id] : [];
-    const index = arr.indexOf(value);
-    if (index >= 0) arr.splice(index, 1);
-    else arr.push(value);
-    state.answers[group.id] = arr;
-    state.lastPicked[group.id] = arr.includes(value) ? value : arr[arr.length - 1] || null;
+    const option = group.options.find((item) => item.value === value);
+    const current = Array.isArray(state.answers[group.id]) ? state.answers[group.id] : [];
+    const index = current.indexOf(value);
+    let next;
+    if (option?.exclusive) {
+      next = index >= 0 ? [] : [value];
+    } else {
+      const exclusive = new Set(group.options.filter((item) => item.exclusive).map((item) => item.value));
+      next = index >= 0
+        ? current.filter((item) => item !== value)
+        : current.filter((item) => !exclusive.has(item)).concat(value);
+    }
+    state.answers[group.id] = next;
+    state.lastPicked[group.id] = next.includes(value) ? value : next[next.length - 1] || null;
   } else {
     state.answers[group.id] = value;
     state.lastPicked[group.id] = value;
@@ -495,8 +490,6 @@ function onNext() {
   if (state.step === STEP_COUNT) {
     state.busy = true;
     state.results = matchGames(state.games, state.answers);
-    state.open = {};
-    if (state.results[0]) state.open[state.results[0].game.id] = true;
     state.view = "results";
     state.slide = "forward";
     render();
@@ -531,203 +524,149 @@ function onBack() {
   }, 220);
 }
 
-function ageBand(ageKey) {
-  const map = { "3-4": [3, 4], "5-7": [5, 7], "8-10": [8, 10], "11+": [11, 99] };
-  return map[ageKey] || [5, 10];
-}
-
-const SESSION_COPY = {
-  short_match: "짧은 한 판",
-  stage: "스테이지 단위",
-  open_ended: "자유롭게 이어짐",
-};
-
-function pickedList(value) {
-  if (Array.isArray(value)) return value.filter(Boolean);
-  return value ? [value] : [];
-}
-
-function buildChecks(game, answers) {
-  const mom = game.mom_control || {};
-  const userR = READING_RANK[answers.reading] ?? 1;
-  const needR = game.reading_level ?? 0;
-  const readingValue = ["그림·음성으로 진행", "짧은 안내 문구 위주", "스토리 대사를 읽어야 함"][needR] || "짧은 안내 문구 위주";
-  const userC = CONTROL_RANK[answers.control] ?? 1;
-  const gameC = CONTROL_GAME[game.control_difficulty] ?? 1;
-  const controlValue = ["이동·점프, 카메라 자동", "점프와 방향, 카메라 보조", "3D 시점과 여러 버튼"][gameC];
-  const userV = VIOLENCE_RANK[answers.violence] ?? 1;
-  const gameV = VIOLENCE_RANK[mom.violence_level] ?? 1;
-  const violenceValue = mom.violence || {
-    strict: "싸움 연출 없음",
-    cartoon: "통통 튕기는 정도",
-    action: "칼·무기 싸움 (피 없음)",
-  }[mom.violence_level] || "—";
-  const [lo, hi] = ageBand(answers.age);
-  const ageOk = game.min_age <= hi + 1 && (game.max_age ?? 99) >= lo;
-  const userS = SESSION_RANK[answers.session_shape];
-  const gameS = SESSION_RANK[game.session_shape];
-  const sessionOk = userS == null || gameS == null || gameS <= userS;
-  const sessionValue = `${SESSION_COPY[game.session_shape] || "끝맺음 정보 없음"} · ${mom.save_type || "저장 정보 없음"}`;
-  const pickedCoop = pickedList(answers.coop_mode);
-  const coopTypes = mom.coop_types || [];
-  const coopOk = pickedCoop.length > 0 && pickedCoop.every((mode) => coopTypes.includes(mode));
-  return [
-    { label: "연령", value: `만 ${game.min_age}세부터 추천`, ok: ageOk },
-    { label: "글 읽기", value: readingValue, ok: userR >= needR },
-    { label: "조작", value: controlValue, ok: userC >= gameC },
-    { label: "폭력 표현", value: violenceValue, ok: gameV <= userV },
-    { label: "끝맺음", value: sessionValue, ok: sessionOk },
-    { label: "함께하기", value: mom.coop_support || "—", ok: coopOk },
-  ];
-}
-
-function verdictOf(game, answers, checks) {
-  const byLabel = Object.fromEntries(checks.map((item) => [item.label, item.ok]));
-  const userR = READING_RANK[answers.reading] ?? 1;
-  const userC = CONTROL_RANK[answers.control] ?? 1;
-  const gameC = CONTROL_GAME[game.control_difficulty] ?? 1;
-  const userV = VIOLENCE_RANK[answers.violence] ?? 1;
-  const gameV = VIOLENCE_RANK[game.mom_control?.violence_level] ?? 1;
-  const fragile = answers.frustration === "easy_quit" && !game.frustration_friendly;
-  const kartAssist = (game.id === "mario_kart8" || game.id === "mario_kart_world") && answers.control !== "skilled";
-  const violenceOver = gameV > userV || byLabel["폭력 표현"] === false;
-  if (
-    userR < (game.reading_level ?? 0)
-    || userC < gameC
-    || fragile
-    || kartAssist
-    || violenceOver
-    || byLabel["끝맺음"] === false
-  ) {
-    return "care";
-  }
-  return "safe";
-}
-
 function cautionNotes(game, answers) {
   const notes = [];
-  if (game.id === "kirby_discovery") {
-    notes.push("2인 플레이 때 둘째 플레이어는 커비가 아닌 다른 캐릭터로 고정돼요.");
-  }
   if (game.id === "mario_kart8" && answers.control !== "skilled") {
-    notes.push("스마트 스티어링은 일시정지 메뉴에서 켤 수 있어요.");
+    notes.push("커브가 어려우면 일시정지 메뉴에서 스마트 스티어링을 켜 주세요.");
   }
   if (game.id === "mario_kart_world" && answers.control !== "skilled") {
     notes.push("자동 가속과 핸들 보조를 켜면 코스를 끝까지 달리기 쉬워요.");
   }
   if (game.requires_motion) {
-    notes.push("조이콘을 움직여야 해서 테이블에 내려놓고 하는 플레이는 어려워요.");
+    notes.push("조이콘을 움직여야 해서, 테이블에 내려놓고 하기는 어려워요.");
   }
   const userV = VIOLENCE_RANK[answers.violence] ?? 1;
   const gameV = VIOLENCE_RANK[game.mom_control?.violence_level] ?? 1;
   if (gameV > userV) {
-    notes.push("허용한 것보다 싸움 연출이 강해요. 첫 판은 옆에서 같이 확인해 주세요.");
+    notes.push("고르신 것보다 싸움 장면이 있어요. 첫 판은 옆에서 같이 봐 주세요.");
   }
   const userS = SESSION_RANK[answers.session_shape];
   const gameS = SESSION_RANK[game.session_shape];
   if (userS != null && gameS != null && gameS > userS) {
-    notes.push("한 판이 고른 것보다 길어질 수 있어요. 끌 시간을 미리 정해 주세요.");
+    notes.push("한 판이 고르신 것보다 길어질 수 있어요. 끌 시간을 미리 정해 주세요.");
   }
   const userR = READING_RANK[answers.reading] ?? 1;
   if (userR < (game.reading_level ?? 0)) {
     notes.push("화면에 글이 나와요. 부모가 한 줄씩 읽어 주면 진행이 쉬워요.");
   }
   if (answers.frustration === "easy_quit" && !game.frustration_friendly) {
-    notes.push("같은 구간에서 막히면 짜증이 날 수 있어요. 짧은 목표만 정해 주세요.");
+    notes.push("같은 곳에서 막히면 속상해할 수 있어요. 오늘은 여기까지, 하고 미리 정해 주세요.");
+  }
+  if (game.id === "kirby_discovery") {
+    notes.push("둘이 할 때 둘째는 커비가 아니라 다른 캐릭터로 해요.");
+  }
+  if (game.id === "pokemon_scarlet") {
+    notes.push("저장은 메뉴에서 직접 해요. 처음에는 부모가 같이 봐 주세요.");
+  }
+  if (game.id === "pokemon_letsgo") {
+    notes.push("공을 던지는 동작은 처음에 부모가 한 번 보여 주세요.");
+  }
+  if (game.id === "splatoon3") {
+    notes.push("온라인으로 겨루면 승부 때문에 기분이 오르내릴 수 있어요.");
+  }
+  if (game.id === "donkey_kong_bananza") {
+    notes.push("게임 안에서 돈을 쓰는 항목이 있어요.");
   }
   return notes.slice(0, 2);
 }
 
-function pitchFor(game, answers) {
-  const age = WIZARD[0].groups[0].options.find((opt) => opt.value === answers.age)?.summary || "이 나이";
-  const control = WIZARD[0].groups[2].options.find((opt) => opt.value === answers.control)?.summary || "조작";
-  const pitches = {
-    kirby_discovery: answers.frustration === "persistent"
-      ? `${age} · ${control} 수준에 맞고, 숨은 길을 찾는 재미도 있어요.`
-      : `${age} · ${control} 수준에 딱 맞고, 떨어져도 바로 그 자리에서 다시 시작돼요.`,
-    mario_wonder: "2D라 조작이 쉽고, 부모가 옆에서 같이 뛰며 도와줄 수 있어요.",
-    yoshi_crafted: "느긋한 속도에, 날개로 떠 있는 모드가 있어 실패에 약한 아이도 편해요.",
-    mario_kart8: answers.control === "skilled"
-      ? "짧은 레이스로 가족이 바로 한 판 즐길 수 있어요."
-      : "자동 핸들 보조를 켜면 커브 헤매는 아이도 코스를 끝까지 달릴 수 있어요.",
-    animal_crossing: "싸우는 장면이 없고, 자기 속도대로 섬을 가꾸는 놀이예요.",
-    pokemon_scarlet: "읽을 글과 메뉴가 있어요. 부모가 처음 저장 방법을 같이 봐 주면 좋아요.",
-    nintendo_sports: "조이콘을 움직여 하는 스포츠예요. 짧은 경기라 가족이 번갈아 하기 좋아요.",
-    zelda_echoes: "퍼즐을 푸는 탐험이에요. 글과 힌트를 읽을 수 있는 아이에게 맞아요.",
-    splatoon3: "잉크로 영역을 칠하는 팀 놀이예요. 온라인 승부는 감정 기복이 있을 수 있어요.",
-    kirby_fighters2: "한 판이 짧아 가족이 바로 붙어 놀기 좋아요. 맞으면 통통 튀어 오르는 연출이에요.",
-    pokemon_letsgo: "공을 던지는 동작으로 포켓몬을 만나요. 처음 조작은 부모가 한 번 보여 주세요.",
-    ring_fit: "링을 밀고 당기며 움직이는 운동 모험이에요. 하루 시간을 정해 두고 하는 편이 좋아요.",
-    mario_kart_world: answers.control === "skilled"
-      ? "스위치 2 전용 짧은 레이스예요. 가족이 바로 한 판 달릴 수 있어요."
-      : "스위치 2 전용 레이스예요. 자동 가속·핸들 보조를 켜면 짧은 판으로 같이 달릴 수 있어요.",
-    donkey_kong_bananza: "스위치 2 전용 탐험이에요. 주먹으로 길을 내고, 부모가 2인으로 도와줄 수 있어요. 인게임 결제가 있습니다.",
+function gameKind(game) {
+  const kinds = {
+    kirby_discovery: "동그란 커비가 길을 삼키며 앞으로 가는 모험이에요. 떨어져도 그 자리에서 다시 시작돼요.",
+    mario_wonder: "마리오가 옆으로 뛰어가는 모험이에요. 꽃의 힘으로 길이 갑자기 바뀌어요.",
+    yoshi_crafted: "요시가 알을 던지며 천천히 나아가는 모험이에요. 날개로 떠 있을 수도 있어요.",
+    mario_kart8: "가족과 짧게 한 판씩 달리는 카트 놀이예요.",
+    animal_crossing: "싸우지 않고, 섬을 가꾸고 주민을 만나는 생활 놀이예요.",
+    pokemon_scarlet: "넓은 길을 다니며 포켓몬을 만나고 모으는 모험이에요.",
+    nintendo_sports: "조이콘을 움직여 볼링이나 테니스처럼 짧게 하는 스포츠예요.",
+    zelda_echoes: "퍼즐을 풀고 길을 찾는 탐험이에요.",
+    splatoon3: "잉크로 바닥을 칠해 영역을 넓히는 팀 놀이예요.",
+    kirby_fighters2: "커비끼리 짧게 한 판씩 붙어 노는 놀이예요. 맞으면 통통 튀어요.",
+    pokemon_letsgo: "공을 던져 포켓몬을 만나고 같이 길을 가는 놀이예요.",
+    ring_fit: "링을 밀고 당기며 몸을 움직이는 운동 모험이에요.",
+    mario_kart_world: "스위치 2에서 짧게 한 판씩 달리는 카트 놀이예요.",
+    donkey_kong_bananza: "스위치 2에서 주먹으로 길을 내며 탐험하는 놀이예요. 부모가 옆에서 도와줄 수 있어요.",
   };
-  return pitches[game.id] || game.summary || "";
+  return kinds[game.id] || String(game.summary || "").trim();
+}
+
+function parentReason(reason, game, answers) {
+  if (reason === "연령 적합") return `만 ${game.min_age}세부터 할 수 있어요`;
+  if (reason === "조작 난이도 적합") {
+    if (game.control_difficulty === "쉬움") return "버튼이 많지 않아서 조작이 맞아요";
+    if (game.control_difficulty === "보통") return "이동과 점프면 돼서 조작이 맞아요";
+    return "조작이 맞아요";
+  }
+  if (reason === "플레이 스타일 일치") {
+    const names = {
+      decorating: "꾸미기",
+      adventure: "모험",
+      sports: "스포츠",
+      puzzle: "퍼즐",
+      body: "몸으로 놀기",
+    };
+    const picked = Array.isArray(answers.play_style) ? answers.play_style : [];
+    const hits = picked
+      .filter((style) => (game.play_styles || []).includes(style))
+      .map((style) => names[style])
+      .filter(Boolean);
+    return hits.length ? `${hits.join("·")} 놀이가 맞아요` : "놀이 방식이 맞아요";
+  }
+  const copy = {
+    "읽기 수준 OK": "글 읽기가 맞아요",
+    "부모가 읽어 주면 진행": "글은 부모가 읽어 주면 돼요",
+    "실패해도 바로 이어짐": "실패해도 바로 이어져요",
+    "허용한 연출보다 순한 편": "싸움 연출이 더 순해요",
+    "끝맺음 맞음": "고르신 만큼의 길이로 끝나요",
+    "함께 하기 맞음": "같이 하는 방식이 맞아요",
+    "선호 캐릭터": "좋아하는 캐릭터가 나와요",
+  };
+  return copy[reason] || "";
+}
+
+function matchReasonsHtml(reasons, game, answers) {
+  const phrases = (reasons || []).map((reason) => parentReason(reason, game, answers)).filter(Boolean);
+  if (!phrases.length) return "";
+  const items = phrases.map((phrase) => `<li>${escapeHtml(phrase)}</li>`).join("");
+  return `
+    <div class="match-block">
+      <p class="match-label">이렇게 맞아요</p>
+      <ul class="match-list">${items}</ul>
+    </div>`;
 }
 
 function cautionHtml(notes) {
   if (!notes.length) return "";
-  const title = `알아둘 점 ${notes.length}가지`;
-  const body = notes.length === 1 ? notes[0] : notes.join(" ");
-  return `<div class="caution">${icon("alert")}<p><strong>${title}</strong> · ${escapeHtml(body)}</p></div>`;
-}
-
-function checksHtml(checks) {
-  return checks
-    .map((item) => `
-      <div class="check-row ${item.ok ? "is-ok" : "is-miss"}">
-        <span class="k">${escapeHtml(item.label)}</span>
-        <span class="v">${escapeHtml(item.value)}</span>
-        <span class="mark">${item.ok ? icon("check") : icon("minus")}</span>
-      </div>`)
-    .join("");
+  return `<div class="caution">${icon("alert")}<p>${escapeHtml(notes.join(" "))}</p></div>`;
 }
 
 function resultCard(item, index) {
   const game = item.game;
-  const checks = buildChecks(game, state.answers);
-  const okCount = checks.filter((row) => row.ok).length;
-  const verdict = verdictOf(game, state.answers, checks);
   const notes = cautionNotes(game, state.answers);
-  const open = Boolean(state.open[game.id]);
   const top = index === 0;
-  const verdictLabel = verdict === "safe" ? "안심하고 줘도 돼요" : "부모가 처음 설정해 주세요";
-  const verdictIcon = verdict === "safe" ? "shield" : "info";
   const href = guideByTitle.has(game.title) ? withBase(`games/${guideByTitle.get(game.title)}.html`) : "";
-  const cta = href ? `<a class="guide-cta" href="${href}">부모 가이드 전체 보기</a>` : "";
+  const cta = href ? `<a class="guide-link" href="${href}">부모 가이드 전체 보기</a>` : "";
   const badge = top
     ? `<span class="best-pill">가장 잘 맞아요</span>`
     : `<span class="rank-label">${index + 1}위</span>`;
+  const pct = Number.isFinite(item.matchPct) ? `${item.matchPct}% 맞춤` : "";
+  const kind = gameKind(game);
+  const kindHtml = kind ? `<p class="kind">${escapeHtml(kind)}</p>` : "";
   return `
-    <article class="game-card${open ? " is-open" : ""}" data-id="${escapeHtml(game.id)}">
-      <div class="hero-art" ${open ? "" : "hidden"} aria-hidden="true">
-        <span class="hero-emoji">${game.image_emoji || "🎮"}</span>
-      </div>
+    <article class="game-card" data-id="${escapeHtml(game.id)}">
       <div class="card-kicker">
         ${badge}
-        <span class="fit-label">내 조건 ${okCount}/${checks.length} 맞춤</span>
+        <span class="fit-label">${escapeHtml(pct)}</span>
       </div>
       <h2 class="game-title ${top ? "is-top" : "is-rest"}">${escapeHtml(game.title)}</h2>
-      <p class="verdict ${verdict === "safe" ? "is-safe" : "is-care"}">${icon(verdictIcon)}<span>${verdictLabel}</span></p>
-      <p class="pitch">${escapeHtml(pitchFor(game, state.answers))}</p>
-      <div class="game-more" ${open ? "" : "hidden"}>
-        ${cautionHtml(notes)}
-        <div class="check-list">${checksHtml(checks)}</div>
-        <p class="source">근거 · 권장 만 ${game.min_age}세+ · 마이멜로 정리</p>
-        ${cta}
-      </div>
-      <button type="button" class="fold" data-id="${escapeHtml(game.id)}" aria-expanded="${open ? "true" : "false"}">
-        ${open ? `접기 ${icon("chevUp")}` : `왜 추천했는지 자세히 ${icon("chevDown")}`}
-      </button>
+      ${kindHtml}
+      ${matchReasonsHtml(item.reasons, game, state.answers)}
+      ${cautionHtml(notes)}
+      ${cta}
     </article>`;
 }
 
 function renderResults() {
-  const parts = summaryParts();
-  const chips = parts
-    .map((part) => `<span class="cond-chip">${escapeHtml(part)}</span>`)
-    .join("");
   const slide = state.slide === "back" ? "slide-back" : "slide-forward";
   const list = state.results.length
     ? state.results.map((item, index) => resultCard(item, index)).join("")
@@ -736,39 +675,17 @@ function renderResults() {
     <div class="flow results-flow">
       <div class="step-stage">
         <div class="step-body ${slide}">
-          <h1 class="flow-title results-title">우리 아이에게 맞는 게임</h1>
-          <div class="cond-row">
-            ${chips}
-            <button type="button" class="change-link" id="btn-change">조건 바꾸기</button>
-          </div>
+          <h1 class="flow-title results-title">맞는 게임</h1>
           <div class="result-list">${list}</div>
+          <button type="button" class="restart-btn" id="btn-restart">다시하기</button>
         </div>
       </div>
     </div>`;
 }
 
 function bindResults() {
-  document.getElementById("btn-change")?.addEventListener("click", () => {
-    state.view = "step";
-    state.step = 1;
-    state.slide = "back";
-    render();
-  });
-  app.querySelectorAll(".fold").forEach((btn) => {
-    btn.addEventListener("click", () => {
-      const id = btn.dataset.id;
-      const card = btn.closest(".game-card");
-      if (!card) return;
-      const open = !card.classList.contains("is-open");
-      card.classList.toggle("is-open", open);
-      state.open[id] = open;
-      const hero = card.querySelector(".hero-art");
-      const more = card.querySelector(".game-more");
-      if (hero) hero.hidden = !open;
-      if (more) more.hidden = !open;
-      btn.setAttribute("aria-expanded", open ? "true" : "false");
-      btn.innerHTML = open ? `접기 ${icon("chevUp")}` : `왜 추천했는지 자세히 ${icon("chevDown")}`;
-    });
+  document.getElementById("btn-restart")?.addEventListener("click", () => {
+    beginWizard();
   });
 }
 
@@ -777,7 +694,6 @@ function resetAnswers() {
   state.results = [];
   state.step = 1;
   state.lastPicked = {};
-  state.open = {};
 }
 
 function escapeHtml(str) {
