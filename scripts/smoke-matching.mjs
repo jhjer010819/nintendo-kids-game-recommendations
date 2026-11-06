@@ -157,6 +157,38 @@ assert(matchGames(zelda, { ...base, violence: "action", session_shape: "open_end
 const reasons = matchGames(games, wide).flatMap((row) => row.reasons);
 assert(!reasons.includes("폭력 수준 안전"), "generic violence-safe reason is not emitted");
 
+const noChar = { ...base, characters: [] };
+const noneChar = { ...base, characters: ["none"] };
+const noneLabel = { ...base, characters: ["없음"] };
+const catalogEmpty = matchGames(games, noChar);
+const catalogNone = matchGames(games, noneChar);
+const catalogNoneLabel = matchGames(games, noneLabel);
+assert(
+  catalogEmpty.map((row) => `${row.game.id}:${row.score}`).join()
+    === catalogNone.map((row) => `${row.game.id}:${row.score}`).join(),
+  "none ranks and scores like an empty character list",
+);
+assert(
+  catalogEmpty.map((row) => `${row.game.id}:${row.score}`).join()
+    === catalogNoneLabel.map((row) => `${row.game.id}:${row.score}`).join(),
+  "없음 label ranks and scores like an empty character list",
+);
+assert(!catalogNone.some((row) => row.reasons.includes("선호 캐릭터")), "none is not a character hit");
+
+const marioGame = shell({ id: "mario-like", characters: ["마리오", "mario"] });
+const plainGame = shell({ id: "plain", characters: ["없음"] });
+const neutralMario = one(marioGame, noChar);
+const noneMario = one(marioGame, noneChar);
+const pickedMario = one(marioGame, { ...base, characters: ["mario"] });
+const missedPlain = one(plainGame, { ...base, characters: ["mario"] });
+const noneOnTagged = one(plainGame, noneChar);
+assert(Math.abs(neutralMario.score - noneMario.score) < 0.001, "none does not change a matching franchise score");
+assert(pickedMario.score > neutralMario.score, "a chosen franchise still outranks no preference");
+assert(noneOnTagged.score > missedPlain.score, "none stays neutral instead of missing a fake character");
+assert(!noneOnTagged.reasons.includes("선호 캐릭터"), "a game tagged 없음 is not treated as a match");
+const mixed = one(marioGame, { ...base, characters: ["none", "mario"] });
+assert(Math.abs(mixed.score - pickedMario.score) < 0.001, "none is ignored when a franchise is also chosen");
+
 if (failed) {
   console.error(`${failed} failed`);
   process.exit(1);

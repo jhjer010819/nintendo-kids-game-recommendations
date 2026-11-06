@@ -135,6 +135,13 @@ const WIZARD = [
           { value: "kirby", label: "커비", summary: "커비", hint: "동그란 커비가 나오는 게임을 더 봐요." },
           { value: "pokemon", label: "포켓몬", summary: "포켓몬", hint: "피카츄 등 포켓몬이 나오는 게임을 더 봐요." },
           { value: "animal", label: "동물의 숲", summary: "동물의 숲", hint: "동물의 숲 주민과 섬이 나오는 게임을 더 봐요." },
+          {
+            value: "none",
+            label: "없음",
+            summary: "없음",
+            exclusive: true,
+            hint: "좋아하는 캐릭터가 없어도 돼요. 특정 시리즈를 더 추천하지 않아요.",
+          },
         ],
       },
       {
@@ -310,21 +317,6 @@ function activeHint(group) {
   return group.options.find((opt) => opt.value === value)?.hint || "";
 }
 
-function summaryParts() {
-  const parts = [];
-  for (const step of WIZARD) {
-    for (const group of step.groups) {
-      const value = state.answers[group.id];
-      const chosen = group.multi ? (Array.isArray(value) ? value : []) : value ? [value] : [];
-      for (const key of chosen) {
-        const opt = group.options.find((item) => item.value === key);
-        if (opt) parts.push(opt.summary || opt.label);
-      }
-    }
-  }
-  return parts;
-}
-
 function progressPct() {
   return ((state.step - 1) / STEP_COUNT) * 100;
 }
@@ -340,8 +332,9 @@ function chipHtml(group) {
   const buttons = group.options
     .map((opt) => {
       const on = selected.has(opt.value);
+      const wide = opt.exclusive ? " chip-wide" : "";
       return `
-        <button type="button" class="chip${on ? " is-on" : ""}" data-group="${group.id}" data-value="${opt.value}" aria-pressed="${on ? "true" : "false"}">
+        <button type="button" class="chip${on ? " is-on" : ""}${wide}" data-group="${group.id}" data-value="${opt.value}" aria-pressed="${on ? "true" : "false"}">
           <span class="chip-check">${icon("check")}</span>
           <span class="chip-label">${opt.label}</span>
         </button>`;
@@ -407,7 +400,7 @@ function renderWizard() {
             ${step.groups.map(groupHtml).join("")}
           </div>
           <button type="button" class="next-btn ${next.ready ? "is-ready" : "is-pending"}" id="btn-next">${escapeHtml(next.text)}</button>
-          <p class="fine-print">고른 내용은 결과 화면에서 언제든 바꿀 수 있어요</p>
+          <p class="fine-print">처음부터 다시 고르려면 결과 맨 아래의 다시하기를 눌러 주세요</p>
           <button type="button" class="back-link" id="btn-back">${step.id === 1 ? "처음으로" : "이전"}</button>
           <p id="step-status" class="sr-only" aria-live="polite"></p>
         </div>
@@ -443,12 +436,20 @@ function onChip(chip) {
   if (!group) return;
   const value = chip.dataset.value;
   if (group.multi) {
-    const arr = Array.isArray(state.answers[group.id]) ? state.answers[group.id] : [];
-    const index = arr.indexOf(value);
-    if (index >= 0) arr.splice(index, 1);
-    else arr.push(value);
-    state.answers[group.id] = arr;
-    state.lastPicked[group.id] = arr.includes(value) ? value : arr[arr.length - 1] || null;
+    const option = group.options.find((item) => item.value === value);
+    const current = Array.isArray(state.answers[group.id]) ? state.answers[group.id] : [];
+    const index = current.indexOf(value);
+    let next;
+    if (option?.exclusive) {
+      next = index >= 0 ? [] : [value];
+    } else {
+      const exclusive = new Set(group.options.filter((item) => item.exclusive).map((item) => item.value));
+      next = index >= 0
+        ? current.filter((item) => item !== value)
+        : current.filter((item) => !exclusive.has(item)).concat(value);
+    }
+    state.answers[group.id] = next;
+    state.lastPicked[group.id] = next.includes(value) ? value : next[next.length - 1] || null;
   } else {
     state.answers[group.id] = value;
     state.lastPicked[group.id] = value;
@@ -724,10 +725,6 @@ function resultCard(item, index) {
 }
 
 function renderResults() {
-  const parts = summaryParts();
-  const chips = parts
-    .map((part) => `<span class="cond-chip">${escapeHtml(part)}</span>`)
-    .join("");
   const slide = state.slide === "back" ? "slide-back" : "slide-forward";
   const list = state.results.length
     ? state.results.map((item, index) => resultCard(item, index)).join("")
@@ -736,23 +733,17 @@ function renderResults() {
     <div class="flow results-flow">
       <div class="step-stage">
         <div class="step-body ${slide}">
-          <h1 class="flow-title results-title">우리 아이에게 맞는 게임</h1>
-          <div class="cond-row">
-            ${chips}
-            <button type="button" class="change-link" id="btn-change">조건 바꾸기</button>
-          </div>
+          <h1 class="flow-title results-title">맞는 게임</h1>
           <div class="result-list">${list}</div>
+          <button type="button" class="restart-btn" id="btn-restart">다시하기</button>
         </div>
       </div>
     </div>`;
 }
 
 function bindResults() {
-  document.getElementById("btn-change")?.addEventListener("click", () => {
-    state.view = "step";
-    state.step = 1;
-    state.slide = "back";
-    render();
+  document.getElementById("btn-restart")?.addEventListener("click", () => {
+    beginWizard();
   });
   app.querySelectorAll(".fold").forEach((btn) => {
     btn.addEventListener("click", () => {

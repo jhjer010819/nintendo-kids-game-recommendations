@@ -224,7 +224,9 @@ function softScore(game, a) {
   }
 
   max += WEIGHTS.character;
-  const chars = asList(a.characters).map((c) => c.toLowerCase());
+  // "없음" is an explicit no-preference. Score it like an empty list.
+  // Matching the token against game.characters would treat every title as a miss.
+  const chars = characterPrefs(a.characters);
   if (chars.length === 0) {
     score += WEIGHTS.character * 0.5;
   } else {
@@ -256,6 +258,14 @@ function softScore(game, a) {
   }
 
   return { score, max, reasons };
+}
+
+const NO_CHARACTER_PREF = new Set(["none", "없음"]);
+
+function characterPrefs(value) {
+  return asList(value)
+    .map((item) => String(item).trim().toLowerCase())
+    .filter((item) => item && !NO_CHARACTER_PREF.has(item));
 }
 
 function aliasHit(userKey, gameChar) {
