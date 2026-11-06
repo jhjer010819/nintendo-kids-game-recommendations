@@ -646,9 +646,7 @@ function resultCard(item, index) {
   const top = index === 0;
   const href = guideByTitle.has(game.title) ? withBase(`games/${guideByTitle.get(game.title)}.html`) : "";
   const cta = href ? `<a class="guide-link" href="${href}">부모 가이드 전체 보기</a>` : "";
-  const badge = top
-    ? `<span class="best-pill">가장 잘 맞아요</span>`
-    : `<span class="rank-label">${index + 1}위</span>`;
+  const badge = `<span class="rank-pill">${top ? "가장 잘 맞아요" : `${index + 1}위`}</span>`;
   const pct = Number.isFinite(item.matchPct)
     ? `<span class="fit-label"><span class="fit-word">적합도</span><span class="fit-num">${item.matchPct}%</span></span>`
     : "";
@@ -656,12 +654,12 @@ function resultCard(item, index) {
   const kindHtml = kind ? `<p class="kind">${escapeHtml(kind)}</p>` : "";
   return `
     <article class="game-card" data-id="${escapeHtml(game.id)}">
-      <div class="card-head">
+      <div class="card-head${top ? "" : " is-quiet"}">
         <div class="card-kicker">
           ${badge}
           ${pct}
         </div>
-        <h2 class="game-title ${top ? "is-top" : "is-rest"}">${escapeHtml(game.title)}</h2>
+        <h2 class="game-title">${escapeHtml(game.title)}</h2>
       </div>
       <div class="card-body">
         ${kindHtml}
