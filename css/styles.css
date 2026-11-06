@@ -559,8 +559,19 @@ body::before {
 .game-card {
   background: var(--surface);
   border-radius: 22px;
-  padding: 16px 16px 14px;
+  padding: 0;
+  overflow: hidden;
   box-shadow: 0 10px 28px rgba(80, 40, 20, 0.06);
+}
+
+.card-head {
+  padding: 14px 16px 12px;
+  background: var(--soft);
+}
+
+.card-body {
+  padding: 14px 16px 14px;
+  background: #fff;
 }
 
 .help-panel[hidden] { display: none !important; }
@@ -591,15 +602,30 @@ body::before {
 }
 
 .fit-label {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 3px;
   margin-left: auto;
-  color: var(--brand-text);
-  font-size: 15px;
-  font-weight: 800;
-  letter-spacing: -0.02em;
+  padding: 7px 9px 6px;
+  border-radius: 8px;
+  background: linear-gradient(160deg, var(--brand), #ff5a66);
+  color: #fff;
+  line-height: 1;
+}
+
+.fit-num {
+  font-size: 16px;
+  font-weight: 900;
+  letter-spacing: -0.03em;
+}
+
+.fit-word {
+  font-size: 12px;
+  font-weight: 700;
 }
 
 .game-title {
-  margin: 0 0 8px;
+  margin: 0;
   color: var(--flow-ink);
   letter-spacing: -0.03em;
   line-height: 1.3;
@@ -677,6 +703,7 @@ body::before {
 .guide-link:hover { color: var(--brand); }
 .guide-link:focus-visible { outline: 2px solid var(--flow-ink); outline-offset: 3px; }
 
+.empty-card { padding: 16px 16px 14px; }
 .empty-card .pitch { margin: 8px 4px 14px; }
 
 @media (prefers-reduced-motion: reduce) {
