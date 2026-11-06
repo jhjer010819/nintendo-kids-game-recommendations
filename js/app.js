@@ -649,20 +649,26 @@ function resultCard(item, index) {
   const badge = top
     ? `<span class="best-pill">가장 잘 맞아요</span>`
     : `<span class="rank-label">${index + 1}위</span>`;
-  const pct = Number.isFinite(item.matchPct) ? `${item.matchPct}% 맞춤` : "";
+  const pct = Number.isFinite(item.matchPct)
+    ? `<span class="fit-label"><span class="fit-num">${item.matchPct}%</span><span class="fit-word">맞춤</span></span>`
+    : "";
   const kind = gameKind(game);
   const kindHtml = kind ? `<p class="kind">${escapeHtml(kind)}</p>` : "";
   return `
     <article class="game-card" data-id="${escapeHtml(game.id)}">
-      <div class="card-kicker">
-        ${badge}
-        <span class="fit-label">${escapeHtml(pct)}</span>
+      <div class="card-head">
+        <div class="card-kicker">
+          ${badge}
+          ${pct}
+        </div>
+        <h2 class="game-title ${top ? "is-top" : "is-rest"}">${escapeHtml(game.title)}</h2>
       </div>
-      <h2 class="game-title ${top ? "is-top" : "is-rest"}">${escapeHtml(game.title)}</h2>
-      ${kindHtml}
-      ${matchReasonsHtml(item.reasons, game, state.answers)}
-      ${cautionHtml(notes)}
-      ${cta}
+      <div class="card-body">
+        ${kindHtml}
+        ${matchReasonsHtml(item.reasons, game, state.answers)}
+        ${cautionHtml(notes)}
+        ${cta}
+      </div>
     </article>`;
 }
 
@@ -675,7 +681,7 @@ function renderResults() {
     <div class="flow results-flow">
       <div class="step-stage">
         <div class="step-body ${slide}">
-          <h1 class="flow-title results-title">맞는 게임</h1>
+          <h1 class="flow-title results-title">우리 아이 게임 추천</h1>
           <div class="result-list">${list}</div>
           <button type="button" class="restart-btn" id="btn-restart">다시하기</button>
         </div>
