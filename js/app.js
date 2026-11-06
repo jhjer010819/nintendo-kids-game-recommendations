@@ -587,7 +587,7 @@ function gameKind(game) {
     mario_kart_world: "스위치 2에서 짧게 한 판씩 달리는 카트 놀이예요.",
     donkey_kong_bananza: "스위치 2에서 주먹으로 길을 내며 탐험하는 놀이예요. 부모가 옆에서 도와줄 수 있어요.",
   };
-  return kinds[game.id] || "";
+  return kinds[game.id] || String(game.summary || "").trim();
 }
 
 function parentReason(reason, game, answers) {
@@ -650,6 +650,8 @@ function resultCard(item, index) {
     ? `<span class="best-pill">가장 잘 맞아요</span>`
     : `<span class="rank-label">${index + 1}위</span>`;
   const pct = Number.isFinite(item.matchPct) ? `${item.matchPct}% 맞춤` : "";
+  const kind = gameKind(game);
+  const kindHtml = kind ? `<p class="kind">${escapeHtml(kind)}</p>` : "";
   return `
     <article class="game-card" data-id="${escapeHtml(game.id)}">
       <div class="card-kicker">
@@ -657,7 +659,7 @@ function resultCard(item, index) {
         <span class="fit-label">${escapeHtml(pct)}</span>
       </div>
       <h2 class="game-title ${top ? "is-top" : "is-rest"}">${escapeHtml(game.title)}</h2>
-      <p class="kind">${escapeHtml(gameKind(game))}</p>
+      ${kindHtml}
       ${matchReasonsHtml(item.reasons, game, state.answers)}
       ${cautionHtml(notes)}
       ${cta}
