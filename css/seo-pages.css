@@ -229,6 +229,19 @@
   margin-bottom: 0.3rem;
 }
 
+.faq-item ul {
+  margin: 0.2rem 0 0.85rem;
+  padding-left: 1.25rem;
+  color: #3a332f;
+  font-size: 1.02rem;
+  line-height: 1.8;
+  font-weight: 400;
+}
+
+.faq-item li {
+  margin: 0.15rem 0;
+}
+
 .guide-picks {
   list-style: none;
   margin: 0.35rem 0 0.5rem;
@@ -276,6 +289,7 @@
   }
 
   .parent-guide p,
+  .faq-item ul,
   .guide-picks a,
   .guide-picks p {
     font-size: 1rem;
