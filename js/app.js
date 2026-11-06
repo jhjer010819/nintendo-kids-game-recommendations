@@ -650,7 +650,7 @@ function resultCard(item, index) {
     ? `<span class="best-pill">가장 잘 맞아요</span>`
     : `<span class="rank-label">${index + 1}위</span>`;
   const pct = Number.isFinite(item.matchPct)
-    ? `<span class="fit-label"><span class="fit-num">${item.matchPct}%</span><span class="fit-word">맞춤</span></span>`
+    ? `<span class="fit-label"><span class="fit-word">적합도</span><span class="fit-num">${item.matchPct}%</span></span>`
     : "";
   const kind = gameKind(game);
   const kindHtml = kind ? `<p class="kind">${escapeHtml(kind)}</p>` : "";

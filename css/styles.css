@@ -566,7 +566,7 @@ body::before {
 
 .card-head {
   padding: 14px 16px 12px;
-  background: var(--soft);
+  background: #f4b3c0;
 }
 
 .card-body {
@@ -604,9 +604,9 @@ body::before {
 .fit-label {
   display: inline-flex;
   align-items: baseline;
-  gap: 3px;
+  gap: 4px;
   margin-left: auto;
-  padding: 7px 9px 6px;
+  padding: 7px 10px 6px;
   border-radius: 8px;
   background: linear-gradient(160deg, var(--brand), #ff5a66);
   color: #fff;
