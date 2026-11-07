@@ -108,7 +108,7 @@ function padGuideBody(g) {
     `폭력·자극 수위는 타이틀마다 다릅니다. ${g.title}는 닌텐도 패밀리 라인에 가까운 연출을 기본으로 하지만, 온라인·대전·퍼즐 난이도 등 부가 요소가 스트레스를 키울 수 있습니다. 가정 규칙(하루 플레이 시간, 음성 채팅 여부, 어려움 설정)을 미리 정해 두면 갈등이 줄어듭니다.`,
     `조작은 초보 모드·자동 조준·보조 기능이 있는 경우 먼저 켜 보세요. 부모가 헬퍼로 들어가 이동만 도와주거나, 어려운 구간만 대신 클리어하는 방식도 효과적입니다. 반대로 아이가 능숙하다면 자유도 높은 탐험·수집 목표를 주어 자기 주도성을 키울 수 있습니다.`,
     `하드웨어는 Switch / Switch OLED / Switch 2 / Lite 호환 여부를 확인하세요. 모션 필수 타이틀은 Lite에서 체험이 달라질 수 있고, TV 모드와 휴대 모드의 조작감·시야도 다릅니다. 구매 전 중고·다운로드 버전·확장팩 유무도 예산 계획에 넣으면 좋습니다.`,
-    `이 글은 마이멜로(MyMallow) 학부모 가이드의 일부입니다. 실제 플레이 시간·지역 심의 등급·최신 업데이트는 공식 정보를 함께 확인해 주세요. 우리 아이 닌텐도 Guide 위저드에서 연령·읽기·조작·좌절·폭력 허용·협동 방식을 입력하면 ${g.title}가 맞춤 추천 목록에 포함되는지 바로 비교할 수 있습니다.`,
+    `이 글은 닌텐도 게임 추천 학부모 가이드의 일부입니다. 실제 플레이 시간·지역 심의 등급·최신 업데이트는 공식 정보를 함께 확인해 주세요. 우리 아이 닌텐도 Guide 위저드에서 연령·읽기·조작·좌절·폭력 허용·협동 방식을 입력하면 ${g.title}가 맞춤 추천 목록에 포함되는지 바로 비교할 수 있습니다.`,
     `정리하면, ${g.title}는 ‘아이 성향에 맞는지’가 핵심입니다. 꾸미기·탐험·스포츠·퍼즐 중 어디에 가까운지, 실패를 얼마나 참는지, 부모와 같은 화면을 나누고 싶은지를 기준으로 고르면 실패 구매를 줄일 수 있습니다. 아래 관련 가이드와 추천 위저드를 함께 활용해 보세요.`,
   ];
   let text = blocks.join("\n\n");
@@ -161,7 +161,7 @@ ${body}
       <a href="${privacy}">Privacy Policy</a>
       <a href="${terms}">Terms</a>
     </nav>
-    <p class="footer-note">마이멜로 (MyMallow) · 학부모용 닌텐도 추천 가이드</p>
+    <p class="footer-note">닌텐도 게임 추천 · 마이멜로(MyMallow)</p>
   </footer>
   <script type="module" src="${asset}js/seo-page.js"></script>
 </body>
@@ -176,17 +176,18 @@ writeFileSync(
   siteChrome({
     title: "소개",
     description:
-      "마이멜로(MyMallow) 우리 아이 닌텐도 Guide 소개 — 학부모가 아이 성향에 맞는 스위치 게임을 고르도록 돕는 추천 가이드입니다.",
+      "마이멜로(MyMallow)가 운영하는 닌텐도 게임 추천 소개 — 학부모가 아이 성향에 맞는 스위치 게임을 고르도록 돕는 추천 가이드입니다.",
     active: "about",
     jsonLd: {
       "@context": "https://schema.org",
       "@type": "AboutPage",
-      name: "마이멜로 우리 아이 닌텐도 Guide 소개",
-      isPartOf: { "@type": "WebSite", name: "우리 아이 닌텐도 Guide" },
+      name: "닌텐도 게임 추천 소개",
+      isPartOf: { "@type": "WebSite", name: "닌텐도 게임 추천" },
+      publisher: { "@type": "Organization", name: "마이멜로", alternateName: "MyMallow" },
     },
     body: `    <article class="seo-article">
-      <h1>마이멜로 · 우리 아이 닌텐도 Guide</h1>
-      <p><strong>마이멜로(MyMallow)</strong>가 만드는 이 사이트는 학부모가 아이의 연령·읽기·조작·좌절 저항력·폭력 허용·협동 방식·하드웨어를 입력하면, 닌텐도 스위치 타이틀을 맞춤 추천하는 가이드입니다. 상업적 리뷰 순위를 그대로 옮기기보다, 가정에서 실제로 플레이할 때 생기는 갈등 지점(실패, 저장, 모션, Lite 호환)을 먼저 봅니다.</p>
+      <h1>닌텐도 게임 추천</h1>
+      <p><strong>마이멜로(MyMallow)</strong>가 만드는 닌텐도 게임 추천은 학부모가 아이의 연령·읽기·조작·좌절 저항력·폭력 허용·협동 방식·하드웨어를 입력하면, 닌텐도 스위치 타이틀을 맞춤 추천하는 가이드입니다. 상업적 리뷰 순위를 그대로 옮기기보다, 가정에서 실제로 플레이할 때 생기는 갈등 지점(실패, 저장, 모션, Lite 호환)을 먼저 봅니다.</p>
       <h2>우리가 중요하게 보는 것</h2>
       <ul>
         <li>아이 눈높이: 읽기와 조작이 게임 재미를 가로막지 않는지</li>
@@ -203,14 +204,14 @@ writeFileSync(
   join(root, "contact.html"),
   siteChrome({
     title: "문의",
-    description: "마이멜로(MyMallow) 우리 아이 닌텐도 Guide 문의 — 콘텐츠·오류 제보·협업 연락처입니다.",
+    description: "마이멜로(MyMallow)가 운영하는 닌텐도 게임 추천 문의 — 콘텐츠·오류 제보·협업 연락처입니다.",
     active: "contact",
     body: `    <article class="seo-article">
       <h1>문의</h1>
       <p>가이드 문구 수정, 게임 데이터 오류, 협업 제안은 아래로 연락해 주세요.</p>
       <ul>
         <li>이메일: <a href="mailto:contact@mymallow.cloud">contact@mymallow.cloud</a></li>
-        <li>브랜드: 마이멜로 (MyMallow)</li>
+        <li>서비스: 닌텐도 게임 추천 · 운영: 마이멜로(MyMallow)</li>
         <li>GitHub: <a href="https://github.com/jhjer010819/nintendo-kids-game-recommendations" rel="noopener">nintendo-kids-game-recommendations</a></li>
       </ul>
       <p>개인정보 처리 방침은 <a href="./privacy.html">Privacy Policy</a>, 이용약관은 <a href="./terms.html">Terms</a>를 참고해 주세요.</p>
@@ -223,11 +224,11 @@ writeFileSync(
   siteChrome({
     title: "개인정보 처리방침",
     description:
-      "마이멜로(MyMallow) 우리 아이 닌텐도 Guide 개인정보 처리방침 — 정적 사이트 운영과 관련한 수집·이용 안내입니다.",
+      "마이멜로(MyMallow)가 운영하는 닌텐도 게임 추천 개인정보 처리방침 — 정적 사이트 운영과 관련한 수집·이용 안내입니다.",
     active: "privacy",
     body: `    <article class="seo-article">
       <h1>개인정보 처리방침</h1>
-      <p>마이멜로(MyMallow)가 운영하는 본 사이트는 브라우저에서 동작하는 정적 웹페이지입니다. 추천 위저드 응답은 기본적으로 기기 안에서만 사용되며, 별도의 회원 가입 데이터베이스에 저장하지 않습니다.</p>
+      <p>마이멜로(MyMallow)가 운영하는 닌텐도 게임 추천은 브라우저에서 동작하는 정적 웹페이지입니다. 추천 위저드 응답은 기본적으로 기기 안에서만 사용되며, 별도의 회원 가입 데이터베이스에 저장하지 않습니다.</p>
       <h2>수집하는 정보</h2>
       <p>사이트 이용 과정에서 호스팅·접속 환경에 따라 IP, 브라우저 종류 등 일반적인 접속 로그가 남을 수 있습니다. 광고·분석 도구를 사용하는 경우 해당 서비스의 쿠키·기기 식별자가 수집될 수 있으며, 세부 정책은 각 제공자의 안내를 따릅니다.</p>
       <h2>문의</h2>
@@ -242,11 +243,11 @@ writeFileSync(
   siteChrome({
     title: "이용약관",
     description:
-      "마이멜로(MyMallow) 우리 아이 닌텐도 Guide 이용약관 — 서비스 이용 조건과 면책 안내입니다.",
+      "마이멜로(MyMallow)가 운영하는 닌텐도 게임 추천 이용약관 — 서비스 이용 조건과 면책 안내입니다.",
     active: "terms",
     body: `    <article class="seo-article">
       <h1>이용약관</h1>
-      <p>본 약관은 마이멜로(MyMallow)가 제공하는 「우리 아이 닌텐도 Guide」(이하 “서비스”)의 이용 조건을 정합니다. 서비스를 이용하시면 본 약관에 동의한 것으로 봅니다.</p>
+      <p>본 약관은 마이멜로(MyMallow)가 제공하는 「닌텐도 게임 추천」(이하 “서비스”)의 이용 조건을 정합니다. 서비스를 이용하시면 본 약관에 동의한 것으로 봅니다.</p>
       <h2>1. 서비스 내용</h2>
       <p>서비스는 학부모가 입력한 아이 성향·환경 정보를 바탕으로 닌텐도 스위치 등 게임 타이틀을 참고용으로 추천하고, 관련 가이드 글을 제공합니다. 회원 가입 없이 브라우저에서 이용할 수 있는 정보 제공형 웹사이트입니다.</p>
       <h2>2. 추천의 성격</h2>
@@ -291,7 +292,7 @@ for (const g of GUIDES) {
       <p class="guide-kicker">인기 닌텐도 게임 부모용 심층 가이드</p>
       <h1>${g.emoji} ${g.title}</h1>
       <p class="guide-lead">${g.summary}</p>
-      <p class="guide-meta">권장 연령 참고: ${g.age} · 마이멜로 학부모 가이드</p>
+      <p class="guide-meta">권장 연령 참고: ${g.age} · 닌텐도 게임 추천 학부모 가이드</p>
       ${bodyText
         .split("\n\n")
         .map((p) => {

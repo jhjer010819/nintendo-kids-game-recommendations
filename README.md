@@ -50,7 +50,7 @@ npm run preview -- --host 127.0.0.1 --port 5173
 - `/` — Track A 히어로(맞춤 찾기 CTA) + 스크롤 아래 Track B(알고리즘·가이드 링크·푸터)
 - `/about.html` `/contact.html` `/privacy.html` `/terms.html` — 소개·문의·개인정보·이용약관
 - `/games/<slug>.html` — 부모용 심층 가이드 12편
-- 브랜드: **마이멜로 (MyMallow)** · 문의: contact@mymallow.cloud
+- 서비스: **닌텐도 게임 추천** · 운영: 마이멜로(MyMallow) · 문의: contact@mymallow.cloud
 
 예: <https://kidgame.mymallow.cloud/games/kirby-discovery.html>
 
