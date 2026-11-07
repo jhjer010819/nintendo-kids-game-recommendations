@@ -114,6 +114,30 @@
   margin: 0.4rem 0 1rem;
 }
 
+.partner-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: fit-content;
+  max-width: 100%;
+  margin: 1.35rem auto 1.5rem;
+  text-align: center;
+}
+
+.partner-card iframe {
+  display: block;
+  border: 0;
+}
+
+.partner-disclosure {
+  margin: 0.85rem 0 0;
+  max-width: 28rem;
+  font-size: 0.82rem !important;
+  line-height: 1.65;
+  font-weight: 400;
+  color: #6b7280 !important;
+}
+
 .quiet-footer,
 .site-footer {
   padding: 1.4rem 1.1rem 2rem;
