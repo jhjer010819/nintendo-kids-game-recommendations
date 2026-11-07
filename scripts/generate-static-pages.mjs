@@ -96,6 +96,11 @@ const GUIDES = [
   },
 ];
 
+const MARIO_WONDER_PARTNER = `      <aside class="partner-card">
+        <iframe src="https://coupa.ng/cqKAPu" width="120" height="240" frameborder="0" scrolling="no" referrerpolicy="unsafe-url"></iframe>
+        <p class="partner-disclosure">이 포스팅은 쿠팡 파트너스 활동의 일환으로, 이에 따른 일정액의 수수료를 제공받습니다.</p>
+      </aside>`;
+
 function padGuideBody(g) {
   const blocks = [
     `학부모 관점에서 ${g.title}를 고를 때 가장 먼저 볼 것은 아이의 연령대와 조작 부담입니다. 권장 연령은 대략 ${g.age}이며, 실제로는 읽기 수준·좌절 저항력·함께 플레이할 보호자의 시간에 따라 체감이 달라집니다. ${g.summary}`,
@@ -289,7 +294,13 @@ for (const g of GUIDES) {
       <p class="guide-meta">권장 연령 참고: ${g.age} · 마이멜로 학부모 가이드</p>
       ${bodyText
         .split("\n\n")
-        .map((p) => `<p>${p}</p>`)
+        .map((p) => {
+          const paragraph = `<p>${p}</p>`;
+          if (g.slug === "mario-wonder" && p.startsWith("정리하면,")) {
+            return `${paragraph}\n${MARIO_WONDER_PARTNER}`;
+          }
+          return paragraph;
+        })
         .join("\n      ")}
       <h2>관련 가이드</h2>
       <ul class="guide-related">
